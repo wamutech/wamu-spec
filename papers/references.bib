@@ -1,0 +1,97 @@
+@inproceedings{cggmp20,
+    author = {Canetti, Ran and Gennaro, Rosario and Goldfeder, Steven and Makriyannis, Nikolaos and Peled, Udi},
+    title = {UC Non-Interactive, Proactive, Threshold ECDSA with Identifiable Aborts},
+    year = {2020},
+    isbn = {9781450370899},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    url = {https://eprint.iacr.org/2021/060},
+    doi = {10.1145/3372297.3423367},
+    note = {\url{https://eprint.iacr.org/2021/060}},
+    abstract = {Building on the Gennaro &amp; Goldfeder and Lindell &amp; Nof protocols (CCS '18), we present two threshold ECDSA protocols, for any number of signatories and any threshold, that improve as follows over the state of the art: -- For both protocols, only the last round requires knowledge of the message, and the other rounds can take place in a preprocessing stage, lending to a non-interactive threshold ECDSA protocol. -- Both protocols withstand adaptive corruption of signatories. Furthermore, they include a periodic refresh mechanism and offer full proactive security. -- Both protocols realize an ideal threshold signature functionality within the UC framework, in the global random oracle model, assuming Strong RSA, DDH, semantic security of the Paillier encryption, and a somewhat enhanced variant of existential unforgeability of ECDSA. -- Both protocols achieve accountability by identifying corrupted parties in case of failure to generate a valid signature. The two protocols are distinguished by the round-complexity and the identification process for detecting cheating parties. Namely: -- For the first protocol, signature generation takes only 4 rounds (down from the current state of the art of 8 rounds), but the identification process requires computation and communication that is quadratic in the number of parties. -- For the second protocol, the identification process requires computation and communication that is only linear in the number of parties, but signature generation takes 7 rounds. These properties (low latency, compatibility with cold-wallet architectures, proactive security, identifiable abort and composable security) make the two protocols ideal for threshold wallets for ECDSA-based cryptocurrencies.},
+    booktitle = {Proceedings of the 2020 ACM SIGSAC Conference on Computer and Communications Security},
+    pages = {1769–1787},
+    numpages = {19},
+    keywords = {blockchain, adaptive security, threshold cryptography, signatures, ECDSA, security with abort, malicious adversaries, cryptocurrencies, composability},
+    location = {Virtual Event, USA},
+    series = {CCS '20}
+}
+
+@misc{cmp20,
+    author = {Ran Canetti and Nikolaos Makriyannis and Udi Peled},
+    title = {UC Non-Interactive, Proactive, Threshold ECDSA},
+    howpublished = {Cryptology ePrint Archive, Paper 2020/492},
+    year = {2020},
+    note = {\url{https://eprint.iacr.org/2020/492}},
+    url = {https://eprint.iacr.org/2020/492}
+}
+
+@misc{gg20,
+    author = {Rosario Gennaro and Steven Goldfeder},
+    title = {One Round Threshold ECDSA with Identifiable Abort},
+    howpublished = {Cryptology ePrint Archive, Paper 2020/540},
+    year = {2020},
+    note = {\url{https://eprint.iacr.org/2020/540}},
+    url = {https://eprint.iacr.org/2020/540}
+}
+
+@inproceedings{gg18,
+  author = {Gennaro, Rosario and Goldfeder, Steven},
+  title = {Fast Multiparty Threshold ECDSA with Fast Trustless Setup},
+  year = {2018},
+  isbn = {9781450356930},
+  publisher = {Association for Computing Machinery},
+  address = {New York, NY, USA},
+  url = {https://doi.org/10.1145/3243734.3243859},
+  doi = {10.1145/3243734.3243859},
+  abstract = {A threshold signature scheme enables distributed signing among n players such that any subgroup of size $t+1$ can sign, whereas any group with t or fewer players cannot. While there exist previous threshold schemes for the ECDSA signature scheme, we are the first protocol that supports multiparty signatures for any $t \l{}eq n$ with an efficient dealerless key generation. Our protocol is faster than previous solutions and significantly reduces the communication complexity as well. We prove our scheme secure against malicious adversaries with a dishonest majority. We implemented our protocol, demonstrating its efficiency and suitability to be deployed in practice.},
+  booktitle = {Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security},
+  pages = {1179–1194},
+  numpages = {16},
+  keywords = {threshold signatures, multiparty computation, bitcoin, digital signatures, cryptpgraphy},
+  location = {Toronto, Canada},
+  series = {CCS '18}
+}
+
+@inproceedings{feldman-vss,
+  author = {Feldman, Paul},
+  title = {A Practical Scheme for Non-Interactive Verifiable Secret Sharing},
+  year = {1987},
+  isbn = {0818608072},
+  publisher = {IEEE Computer Society},
+  address = {USA},
+  url = {https://doi.org/10.1109/SFCS.1987.4},
+  doi = {10.1109/SFCS.1987.4},
+  abstract = {This paper presents an extremely efficient, non-interactive protocol for verifiable secret sharing. Verifiable secret sharing (VSS) is a way of bequeathing information to a set of processors such that a quorum of processors is needed to access the information. VSS is a fundamental tool of cryptography and distributed computing. Seemingly difficult problems such as secret bidding, fair voting, leader election, and flipping a fair coin have simple one-round reductions to VSS. There is a constant-round reduction from Byzantine Agreement to non-interactive VSS. Non-interactive VSS provides asynchronous networks with a constant-round simulation of simultaneous broadcast networks whenever even a bare majority of processors are good. VSS is constantly repeated in the simulation of fault-free protocols by faulty systems. As verifiable secret sharing is a bottleneck for so many results, it is essential to find efficient solutions.},
+  booktitle = {Proceedings of the 28th Annual Symposium on Foundations of Computer Science},
+  pages = {427–438},
+  numpages = {12},
+  series = {SFCS '87}
+}
+
+
+@article{sss79,
+    author = {Shamir, Adi},
+    title = {How to Share a Secret},
+    year = {1979},
+    issue_date = {Nov. 1979},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {22},
+    number = {11},
+    issn = {0001-0782},
+    url = {https://doi.org/10.1145/359168.359176},
+    doi = {10.1145/359168.359176},
+    abstract = {In this paper we show how to divide data D into n pieces in such a way that D is easily reconstructable from any k pieces, but even complete knowledge of k - 1 pieces reveals absolutely no information about D. This technique enables the construction of robust key management schemes for cryptographic systems that can function securely and reliably even when misfortunes destroy half the pieces and security breaches expose all but one of the remaining pieces.},
+    journal = {Commun. ACM},
+    month = {nov},
+    pages = {612-613},
+    numpages = {2},
+    keywords = {interpolation, cryptography, key management}
+}
+
+@online{wiki:interpolation,
+    title = {Wikipedia. Polynomial interpolation},
+    url = {https://en.wikipedia.org/wiki/Polynomial_interpolation},
+    urldate = {2023-05-12},
+}

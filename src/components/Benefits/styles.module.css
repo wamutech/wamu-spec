@@ -1,0 +1,17 @@
+.benefits {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.benefitsSvg {
+  height: 75px;
+  width: 75px;
+  fill: currentColor;
+  opacity: 0.9;
+}
+
+[data-theme='dark'] .benefitsSvg {
+  opacity: 0.8;
+}
