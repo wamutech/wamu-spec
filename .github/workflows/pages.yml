@@ -39,8 +39,11 @@ jobs:
         with:
           node-version: "16"
           cache: yarn
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v2
       - name: Install dependencies
-        run: yarn install
+        run: yarn install --frozen-lockfile
       - name: Build with Docusaurus
         run: yarn build
       - name: Upload artifact
