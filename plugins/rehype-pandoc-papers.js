@@ -131,6 +131,7 @@ async function autoLinkReferences(ast) {
             type: 'element',
             tagName: 'a',
             properties: {
+              href: url,
               target: '_blank',
               rel: 'noopener noreferrer',
             },
