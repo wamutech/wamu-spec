@@ -39,15 +39,6 @@ jobs:
         with:
           node-version: "16"
           cache: yarn
-      - name: Restore cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            public
-            .cache
-          key: ${{ runner.os }}-docusaurus-build-${{ hashFiles('public') }}
-          restore-keys: |
-            ${{ runner.os }}-docusaurus-build-
       - name: Install dependencies
         run: yarn install
       - name: Build with Docusaurus
