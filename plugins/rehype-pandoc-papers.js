@@ -127,8 +127,20 @@ async function autoLinkReferences(ast) {
           }
 
           // Add hyperlink to children.
-          const markup = `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-          children.push(hastElementFromHtml(markup));
+          children.push({
+            type: 'element',
+            tagName: 'a',
+            properties: {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            },
+            children: [
+              {
+                type: 'text',
+                value: url,
+              },
+            ],
+          });
 
           // Add suffix to children.
           if (suffix.length > 0) {
