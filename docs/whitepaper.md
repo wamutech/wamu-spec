@@ -4,7 +4,7 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 15th May, 2023
+date: 16th May, 2023
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -115,26 +115,26 @@ The surviving quorum of honest parties collectively verify the request, and then
 
 ### 4.2. Share recovery with a backup on user-controlled secondary or device-independent storage {#share-recovery-backup}
 
-#### 4.2.1. Overview of share recovery with backup  {#share-recovery-backup-overview}
+#### 4.2.1. Overview of share recovery with a backup  {#share-recovery-backup-overview}
 
 From the share splitting and reconstruction protocol in [section 3](#share-splitting-and-reconstruction) above, we note that for any party $P$, the combination of a signing share $m$ and a sub-share $\beta$ alone is insufficient to reconstruct the secret share $x$. 
 This is because a signature of $m$ from the decentralized identity $I$ is required to compute the sub-share $\alpha$, so that $\alpha$ and $\beta$ can then be used to reconstruct $L$ and compute the secret share $x$ as the constant term of $L$.
 
-Therefore, a signing share $m$ and sub-share $\beta$ pair can be safely backed up to user-controlled secondary (e.g. a secondary device or a flash drive) or device-independent storage (e.g. Apple iCloud [^9], Google Drive [^10], Microsoft OneDrive [^11], Dropbox [^12] e.t.c) without exposing the secret share.
+Therefore, a signing share $m$ and sub-share $\beta$ pair can be safely backed up to user-controlled secondary (e.g. a secondary device or a flash drive) or device-independent storage (e.g. Apple iCloud [^9], Google Drive [^10], Microsoft OneDrive [^11], Dropbox [^12] e.t.c) without exposing the secret share $x$.
 
 #### 4.2.2. Share recovery with an encrypted backup {#share-recovery-backup-encrypted}
 
 For increased security, a signature of a standardized phrase can be used as entropy for generating an encryption secret which can then be used to encrypt the signing share $m$ and the sub-share $\beta$ using a symmetric encryption algorithm before saving them to back up storage. 
 Share recovery would then start by signing this standardized phrase, using the signature to recreate the encryption secret and then decrypting the encrypted backup to retrieve the signing share $m$ and the sub-share $\beta$.
 
-#### 4.2.3. Further security and usability considerations for share recovery {#share-recovery-backup-enhancements}
+#### 4.2.3. Further security and usability considerations for share recovery with a backup {#share-recovery-backup-enhancements}
 
 For further improved security and usability, the signing share $m$ can be prefixed with a custom message that alerts the user to the purpose of the signature. This can help reduce the effectiveness of an adversary that gains access to the backup and tries to trick the user into signing $m$.
 
 Additionally, it's possible to rerun the share splitting protocol to generate a new pair of a signing share $m^ \ast$ and a sub-share $\beta ^ \ast$ such that $m^ \ast \neq m$, $\beta ^ \ast \neq \beta$  and $L^ \ast \neq L$ to be specifically used for backup and recovery. 
 This gives us the option to have separate signing shares for backup and recovery with customized prefixes that make it clear to the user that they're signing a backup signing share.
 
-Lastly, the backup signing share $m^ \ast$ can be generated based on user input (e.g. a passphrase or security questions) removing the need for it to be backed up together with a sub-share $\beta ^ \ast$ but instead relying on the user to provide this input during recovery as a security-usability tradeoff.
+Lastly, the "backup" signing share $m^ \ast$ can be generated based on user input (e.g. a passphrase or security questions) removing the need for it to be backed up together with a sub-share $\beta ^ \ast$ but instead relying on the user to provide this input during recovery as a security-usability tradeoff.
 
 ## 5. Conclusion {#conclusion}
 

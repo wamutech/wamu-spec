@@ -79,7 +79,7 @@ Controlled by Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{15th May, 2023}
+\date{16th May, 2023}
 
 \begin{document}
 \maketitle
@@ -352,7 +352,7 @@ signatory.
 secondary or device-independent storage}\label{share-recovery-backup}}
 
 \hypertarget{share-recovery-backup-overview}{%
-\paragraph{4.2.1. Overview of share recovery with
+\paragraph{4.2.1. Overview of share recovery with a
 backup}\label{share-recovery-backup-overview}}
 
 From the share splitting and reconstruction protocol in
@@ -373,7 +373,7 @@ or a flash drive) or device-independent storage (e.g.~Apple iCloud
 OneDrive \footnote{Microsoft OneDrive.
   \url{https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage}.},
 Dropbox \footnote{Dropbox. \url{https://www.dropbox.com}.} e.t.c)
-without exposing the secret share.
+without exposing the secret share \(x\).
 
 \hypertarget{share-recovery-backup-encrypted}{%
 \paragraph{4.2.2. Share recovery with an encrypted
@@ -390,7 +390,7 @@ the sub-share \(\beta\).
 
 \hypertarget{share-recovery-backup-enhancements}{%
 \paragraph{4.2.3. Further security and usability considerations for
-share recovery}\label{share-recovery-backup-enhancements}}
+share recovery with a backup}\label{share-recovery-backup-enhancements}}
 
 For further improved security and usability, the signing share \(m\) can
 be prefixed with a custom message that alerts the user to the purpose of
@@ -406,11 +406,11 @@ used for backup and recovery. This gives us the option to have separate
 signing shares for backup and recovery with customized prefixes that
 make it clear to the user that they're signing a backup signing share.
 
-Lastly, the backup signing share \(m^ \ast\) can be generated based on
-user input (e.g.~a passphrase or security questions) removing the need
-for it to be backed up together with a sub-share \(\beta ^ \ast\) but
-instead relying on the user to provide this input during recovery as a
-security-usability tradeoff.
+Lastly, the ``backup'' signing share \(m^ \ast\) can be generated based
+on user input (e.g.~a passphrase or security questions) removing the
+need for it to be backed up together with a sub-share \(\beta ^ \ast\)
+but instead relying on the user to provide this input during recovery as
+a security-usability tradeoff.
 
 \hypertarget{conclusion}{%
 \subsection{5. Conclusion}\label{conclusion}}
