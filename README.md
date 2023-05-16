@@ -1,6 +1,6 @@
 # Wamu
 
-This repository contains the whitepaper, technical specification and website source for the [Wamu](https://wamu.tech) project.
+This repository contains the source for the [whitepaper](/papers/whitepaper.md), [technical specification](/papers/specification.md) and website ([pages](/src/pages), [docs](/docs) and [blog](/blog)) for the [Wamu](https://wamu.tech) project.
 
 ### Installation
 
