@@ -65,7 +65,6 @@ async function createConfig() {
           docs: {
             routeBasePath: '/',
             sidebarPath: require.resolve('./sidebars.js'),
-            editUrl: 'https://github.com/wamutech/wamu-spec',
             remarkPlugins,
             rehypePlugins,
             showLastUpdateAuthor: true,
@@ -73,7 +72,6 @@ async function createConfig() {
           },
           blog: {
             showReadingTime: true,
-            editUrl: 'https://github.com/wamutech/wamu-spec',
             remarkPlugins,
             rehypePlugins,
           },
