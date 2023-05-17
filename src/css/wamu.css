@@ -43,3 +43,8 @@
 .csl-right-inline {
   padding-left: 1em;
 }
+
+/* Footer license and copyright links */
+.footer-license-info a {
+  text-decoration: underline;
+}
