@@ -4,6 +4,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import Benefits from '@site/src/components/Benefits';
+import Acknowledgments from '@site/src/components/Acknowledgments';
 
 import styles from './index.module.css';
 
@@ -31,6 +32,8 @@ export default function Home(): JSX.Element {
       <HomepageHeader />
       <main>
         <Benefits />
+
+        <Acknowledgments />
       </main>
     </Layout>
   );

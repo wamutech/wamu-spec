@@ -5,7 +5,7 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 16th May, 2023
+date: 17th May, 2023
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
@@ -300,7 +300,11 @@ This gives us the option to have separate signing shares for backup and recovery
 
 Lastly, the "backup" signing share $m^ \ast$ can be generated based on user input (e.g. a passphrase or security questions) removing the need for it to be backed up together with a sub-share $\beta ^ \ast$ but instead relying on the user to provide this input during recovery as a security-usability tradeoff.
 
-## 13. References {#references}
+## 13. Acknowledgements {#acknowledgements}
+
+This work is funded by a grant from the Ethereum Foundation [^5].
+
+## 14. References {#references}
 
 ::: {#refs}
 :::
@@ -314,3 +318,5 @@ Lastly, the "backup" signing share $m^ \ast$ can be generated based on user inpu
 [^3]: Microsoft OneDrive. <https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage>.
 
 [^4]: Dropbox. <https://www.dropbox.com>.
+
+[^5]: Ethereum Foundation: Ecosystem Support Program. <https://esp.ethereum.foundation>.

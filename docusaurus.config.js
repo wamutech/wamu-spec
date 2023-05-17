@@ -159,7 +159,17 @@ async function createConfig() {
               ],
             },
           ],
-          copyright: `Copyright © ${new Date().getFullYear()} <a href="https://davidsemakula.com" target="_blank">David Semakula</a>.`,
+          copyright: `<div>
+            <div>Copyright © ${new Date().getFullYear()} <a href="https://davidsemakula.com" target="_blank">David Semakula</a>.</div>
+            <div>
+              <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+                <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/80x15.png" />
+              </a>
+            </div>
+            <div>
+              The <a href="/whitepaper">whitepaper</a>, <a href="/specification">technical specification</a> and website content are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+            </div>
+          </div>`,
         },
         prism: {
           theme: lightCodeTheme,

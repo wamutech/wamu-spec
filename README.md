@@ -30,6 +30,6 @@ This repo is configured to deploy to GitHub pages via a [GitHub actions workflow
 
 ## License
 
-The whitepaper and technical specification are licensed under [CC-BY-SA-4.0](/LICENSE-CC). 
+The [whitepaper](/static/whitepaper.pdf), [technical specification](/static/specification.pdf) and website content are licensed under [CC-BY-SA-4.0](/LICENSE-CC). 
 
-The source code is licensed under [GPL-3.0](/LICENSE-GPL)
+The source code is licensed under [GPL-3.0](/LICENSE-GPL).

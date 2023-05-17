@@ -4,7 +4,7 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 16th May, 2023
+date: 17th May, 2023
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -143,7 +143,11 @@ The Wamu project (meaning "together") aims to unlock the benefits of threshold s
 - Defining an open protocol that encourages research into and development of mainstream multi-user threshold signature wallet solutions.
 - Providing modular and performant, free and open-source building blocks that allow software developers to either build new mainstream multi-user threshold signature wallets or integrate state-of-the-art threshold signature schemes into existing mainstream wallets.
 
-## 6. References {#references}
+## 6. Acknowledgements {#acknowledgements}
+
+This work is funded by a grant from the Ethereum Foundation [^13].
+
+## 7. References {#references}
 
 ::: {#refs}
 :::
@@ -172,3 +176,5 @@ The Wamu project (meaning "together") aims to unlock the benefits of threshold s
 [^11]: Microsoft OneDrive. <https://www.microsoft.com/en-us/microsoft-365/onedrive/online-cloud-storage>.
 
 [^12]: Dropbox. <https://www.dropbox.com>.
+
+[^13]: Ethereum Foundation: Ecosystem Support Program. <https://esp.ethereum.foundation>.

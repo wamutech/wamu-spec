@@ -1,0 +1,11 @@
+.acknowledgements {
+  display: flex;
+  align-items: center;
+  padding: 2rem 0;
+  width: 100%;
+}
+
+.acknowledgementsSvg {
+  height: 50px;
+  width: 50px;
+}
