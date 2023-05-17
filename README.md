@@ -33,3 +33,7 @@ This repo is configured to deploy to GitHub pages via a [GitHub actions workflow
 The [whitepaper](/static/whitepaper.pdf), [technical specification](/static/specification.pdf) and website content are licensed under [CC-BY-SA-4.0](/LICENSE-CC). 
 
 The source code is licensed under [GPL-3.0](/LICENSE-GPL).
+
+## Acknowledgements
+
+🌱 Funded by: the [Ethereum Foundation](https://esp.ethereum.foundation/).
