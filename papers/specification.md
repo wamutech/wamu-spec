@@ -107,7 +107,9 @@ Follow the key refresh protocol described in section 3.2 and figure 6 of CGGMP20
 1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$ as follows:
    - The decentralized identity address $pk_i$.
    - The signature $\varphi _i = Sig(sk_i, V_i)$.
-2. At the beginning of Round 2, for each $P_i$, verify $\varphi _j$ from all $P_j$ where $j \neq i$ by checking that the output of $Ver(pk_j, V_j, \varphi _j)$ is valid or report the culprit and halt.
+2. At the beginning of Round 2, for each $P_i$, verify $\varphi _j$ from all $P_j$ where $j \neq i$ as follows:
+   - Verify that $pk_i \in S_j$ or report the culprit and halt.
+   - Verify $\varphi _i$ by checking that the output of $Ver(pk_j, V_j, \varphi _j)$ is valid or report the culprit and halt.
 3. After the Output phase, follow the share splitting protocol in [section 3.1](#share-splitting) to split the new secret share $x_i^\ast$ into a new signing share $m_i^\ast$ and a new sub-share $\beta _i^\ast$ for each party $P_i$.
 4. Modify Stored State for each $P_i$ as follows:
    - Don't store $x_i^\ast$.

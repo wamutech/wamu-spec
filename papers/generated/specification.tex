@@ -337,9 +337,17 @@ secret shares with the following modifications:
   \end{itemize}
 \item
   At the beginning of Round 2, for each \(P_i\), verify \(\varphi _j\)
-  from all \(P_j\) where \(j \neq i\) by checking that the output of
-  \(Ver(pk_j, V_j, \varphi _j)\) is valid or report the culprit and
-  halt.
+  from all \(P_j\) where \(j \neq i\) as follows:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Verify that \(pk_i \in S_j\) or report the culprit and halt.
+  \item
+    Verify \(\varphi _i\) by checking that the output of
+    \(Ver(pk_j, V_j, \varphi _j)\) is valid or report the culprit and
+    halt.
+  \end{itemize}
 \item
   After the Output phase, follow the share splitting protocol in
   \protect\hyperlink{share-splitting}{section 3.1} to split the new
