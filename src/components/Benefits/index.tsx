@@ -14,9 +14,9 @@ const BenefitList: BenefitItem[] = [
     Svg: require('@site/static/img/piggy-bank.svg').default,
     description: (
       <>
-        Threshold signature wallets work completely off-chain so access-structure/security policy updates are free.
-        Additionally, individual transactions are smaller and thus less expensive because they include only one jointly
-        computed signature.
+        Threshold signature wallets work completely off-chain, so access-structure/security policy updates are free.
+        Additionally, individual transactions are smaller (because they include only one jointly computed signature),
+        and thus less expensive.
       </>
     ),
   },
