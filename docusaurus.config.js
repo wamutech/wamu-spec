@@ -171,6 +171,9 @@ async function createConfig() {
             </div>
           </div>`,
         },
+        colorMode: {
+          respectPrefersColorScheme: true,
+        },
         prism: {
           theme: lightCodeTheme,
           darkTheme: darkCodeTheme,
