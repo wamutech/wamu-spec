@@ -4,7 +4,7 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 17th May, 2023
+date: 11th July, 2023
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -59,7 +59,7 @@ For these descriptions, we'll use the following notation:
 - $I$ denotes a decentralized identity. 
 - $sk$ denotes the secret key of a decentralized identity.
 - $Sig$ denotes a signing algorithm.
-- $q$ denotes the prime order of cyclic group of the elliptic curve.
+- $q$ denotes the prime order of the cyclic group of the elliptic curve.
 
 **NOTE:** While the share splitting and reconstruction protocol is described in technical detail in this document, for simplicity, the share recovery protocol is only described at a high-level and no technical detail is provided for decentralized identity verification and rest of Wamu's sub-protocols. 
 We refer the reader to Wamu's technical specification for the technical details that are not provided in this document.
@@ -78,7 +78,7 @@ Given a secret share $x$ as input and access to the decentralized identity $I$ w
 
 1. Sample a random message $m$ (i.e. the signing share).
 2. Compute a signature $(r, s) = Sig(sk, m)$.
-3. Compute the first sub-share of $x$ as the point $\alpha = (r, s \bmod q)$.
+3. Compute the first sub-share of $x$ as the point $\alpha = (r, s) \: (\bmod \, q)$.
 4. Generate a line $L$ (i.e a polynomial of degree 1) such that $\alpha$ is a point on the line and $x$ is the constant term (i.e. Polynomial Interpolation [@wiki:interpolation])
 5. Compute another point $\beta$ from $L$ such that $\beta \neq \alpha$, $\beta$ becomes the second sub-share of $x$.
 6. Erase both $\alpha$ and $L$ from memory.
@@ -89,14 +89,14 @@ Given a secret share $x$ as input and access to the decentralized identity $I$ w
 Given a signing share $m$ and a sub-share $\beta$ as input (i.e. the outputs of the share splitting protocol in [section 3.1](#share-splitting) above) and access to the decentralized identity $I$ with secret key $sk$, the share reconstruction protocol proceeds as follows:
 
 1. Compute a signature $(r, s) = Sig(sk, m)$.
-2. Compute a sub-share $\alpha$ as the point $\alpha = (r, s \bmod q)$.
+2. Compute a sub-share $\alpha$ as the point $\alpha = (r, s) \: (\bmod \, q)$.
 3. Generate a line $L$ by performing Polynomial Interpolation [@wiki:interpolation] using $\alpha$ and $\beta$ as inputs.
 4. Compute $x$ as the constant term of $L$.
 5. Erase both $\alpha$ and $L$ from memory.
 6. Return $x$ as the secret share.
 
-**NOTE:** For ECDSA signatures, the value of the parameter $s$ in $(r, s) = Sig(sk, m)$ is already computed modulo $q$. 
-We use the notation $\alpha = (r, s \bmod q)$ for the sub-share to make it clear (at a glance) that the sub-shares are computed using finite field arithmetic.
+**NOTE:** For ECDSA signatures, the parameters $r$ and $s$ in $(r, s) = Sig(sk, m)$ are already computed modulo $q$. 
+We use the notation $\alpha = (r, s) \: (\bmod \, q)$ for the sub-share to make it clear (at a glance) that the sub-shares are computed using finite field arithmetic.
 
 ## 4. Share Recovery {#share-recovery}
 

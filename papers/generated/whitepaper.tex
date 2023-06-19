@@ -79,7 +79,7 @@ Controlled by Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{17th May, 2023}
+\date{11th July, 2023}
 
 \begin{document}
 \maketitle
@@ -213,7 +213,8 @@ descriptions, we'll use the following notation:
 \item
   \(Sig\) denotes a signing algorithm.
 \item
-  \(q\) denotes the prime order of cyclic group of the elliptic curve.
+  \(q\) denotes the prime order of the cyclic group of the elliptic
+  curve.
 \end{itemize}
 
 \textbf{NOTE:} While the share splitting and reconstruction protocol is
@@ -263,7 +264,7 @@ proceeds as follows:
   Compute a signature \((r, s) = Sig(sk, m)\).
 \item
   Compute the first sub-share of \(x\) as the point
-  \(\alpha = (r, s \bmod q)\).
+  \(\alpha = (r, s) \: (\bmod \, q)\).
 \item
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
@@ -295,7 +296,7 @@ reconstruction protocol proceeds as follows:
   Compute a signature \((r, s) = Sig(sk, m)\).
 \item
   Compute a sub-share \(\alpha\) as the point
-  \(\alpha = (r, s \bmod q)\).
+  \(\alpha = (r, s) \: (\bmod \, q)\).
 \item
   Generate a line \(L\) by performing Polynomial Interpolation
   {[}\protect\hyperlink{ref-wiki:interpolation}{5}{]} using \(\alpha\)
@@ -308,11 +309,11 @@ reconstruction protocol proceeds as follows:
   Return \(x\) as the secret share.
 \end{enumerate}
 
-\textbf{NOTE:} For ECDSA signatures, the value of the parameter \(s\) in
-\((r, s) = Sig(sk, m)\) is already computed modulo \(q\). We use the
-notation \(\alpha = (r, s \bmod q)\) for the sub-share to make it clear
-(at a glance) that the sub-shares are computed using finite field
-arithmetic.
+\textbf{NOTE:} For ECDSA signatures, the parameters \(r\) and \(s\) in
+\((r, s) = Sig(sk, m)\) are already computed modulo \(q\). We use the
+notation \(\alpha = (r, s) \: (\bmod \, q)\) for the sub-share to make
+it clear (at a glance) that the sub-shares are computed using finite
+field arithmetic.
 
 \hypertarget{share-recovery}{%
 \subsection{4. Share Recovery}\label{share-recovery}}
