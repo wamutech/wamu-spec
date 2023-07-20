@@ -86,7 +86,7 @@ Controlled by Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{11th July, 2023}
+\date{20th July, 2023}
 
 \begin{document}
 \maketitle
@@ -475,9 +475,9 @@ decentralized identity.
 Initiation}\label{identity-challenge-initiation}}
 
 To issue an identity challenge to a party \(P_i\) from all verifying
-parties \(P_j\) where \(j \neq i\): 1. Sample a random \(v_j \in Z_q\).
-2. Broadcast \(v_j\) to all parties, such that all parties can compute
-\(v = \sum _j v_j \: (mod \, q)\) where \(j \neq i\).
+parties \(P_j\) where \(j \neq i\): 1. Sample a random \(v_j\). 2.
+Broadcast \(v_j\) to all parties, such that all parties can compute
+\(v = | _{j \neq i} \: v_j\).
 
 \hypertarget{identity-challenge-response}{%
 \paragraph{8.2. Identity Challenge
@@ -491,7 +491,7 @@ parties \(P_j\) where \(j \neq i\):
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Compute \(v = \sum _j v_j \: (mod \, q)\) where \(j \neq i\).
+  Compute \(v = | _{j \neq i} \: v_j\).
 \item
   Compute the signature \(\psi = Sig(sk_i, A | v)\).
 \item
@@ -511,7 +511,7 @@ input:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Compute \(v = \sum _j v_j \: (mod \, q)\) where \(j \neq i\).
+  Compute \(v = | _{j \neq i} \: v_j\).
 \item
   Verify \(\psi\) by checking that the output of
   \(Ver(pk_i, A | v, \psi)\) is valid or report the culprit and halt.
@@ -578,7 +578,7 @@ identity \(I_i^ \ast\) with address \(pk_i^ \ast\) and secret key
     \begin{itemize}
     \tightlist
     \item
-      Compute \(v = \sum _j v_j \: (mod \, q)\) where \(j \neq i\):
+      Compute \(v = | _{j \neq i} \: v_j\):
     \item
       Verify \(\psi ^ \ast\) by checking that the output of
       \(Ver(pk_i^ \ast, A | v, \psi ^ \ast)\) is valid or report the
@@ -694,8 +694,7 @@ secret key \(sk_i\) proceeds as follows:
     \(\forall \, pk_c \in S_c\) where \(c \neq i\), the output of
     \(Ver(pk_c, A | v_c | C | t, \phi _c)\) is valid or halt.
   \item
-    Compute \(v\) as \(v = \sum _c v_c \: (mod \, q)\) where
-    \(c \neq i\).
+    Compute \(v\) as \(v = | _{c \neq i} \: v_c\).
   \item
     Add \(S_c\) to the broadcast parameters.
   \end{itemize}
@@ -713,8 +712,7 @@ secret key \(sk_i\) proceeds as follows:
     \begin{itemize}
     \tightlist
     \item
-      Compute \(v\) as \(v = \sum _c v_c \: (mod \, q)\) where
-      \(c \neq i\).
+      Compute \(v\) as \(v = | _{c \neq i} \: v_c\).
     \end{itemize}
   \item
     Verify that a valid quorum \(S_c\) such that \(S_c \subset S_j\) and

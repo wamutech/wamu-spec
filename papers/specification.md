@@ -5,7 +5,7 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 11th July, 2023
+date: 20th July, 2023
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
@@ -155,14 +155,14 @@ Identity challenges are used to verify that a party controls a decentralized ide
 #### 8.1. Identity Challenge Initiation {#identity-challenge-initiation}
 
 To issue an identity challenge to a party $P_i$ from all verifying parties $P_j$ where $j \neq i$:
-1. Sample a random $v_j \in Z_q$. 
-2. Broadcast $v_j$ to all parties, such that all parties can compute $v = \sum _j v_j \: (mod \, q)$ where $j \neq i$.
+1. Sample a random $v_j$. 
+2. Broadcast $v_j$ to all parties, such that all parties can compute $v = | _{j \neq i} \: v_j$.
 
 #### 8.2. Identity Challenge Response {#identity-challenge-response}
 
 For a party $P_i$ with associated decentralized identity secret key $sk_i$, to respond to an identity challenge given $v_j$ from all parties $P_j$ where $j \neq i$:
 
-1. Compute $v = \sum _j v_j \: (mod \, q)$ where $j \neq i$. 
+1. Compute $v = | _{j \neq i} \: v_j$. 
 2. Compute the signature $\psi = Sig(sk_i, A | v)$. 
 3. Broadcast $\psi$ to all verifying parties $P_j$.
 
@@ -170,7 +170,7 @@ For a party $P_i$ with associated decentralized identity secret key $sk_i$, to r
 
 To verify an identity challenge response from a party $P_i$ given its associated decentralized identity address $pk_i$, a signature $\psi$ and $v_j$ from all verifying parties $P_j$ where $j \neq i$ as input:
 
-1. Compute $v = \sum _j v_j \: (mod \, q)$ where $j \neq i$.
+1. Compute $v = | _{j \neq i} \: v_j$.
 2. Verify $\psi$ by checking that the output of $Ver(pk_i, A | v, \psi)$ is valid or report the culprit and halt.
 
 ## 9. Identity Rotation {#identity-rotation}
@@ -189,7 +189,7 @@ Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with add
 4. For all $P_j$ where $j \neq i$:
    - Verify the identity challenge response from $P_i$ by following the protocol in [section 8.3](#identity-challenge-verification).
    - Verify that $P_i$ controls the new decentralized identity address $pk_i^ \ast$ as follows:
-     - Compute $v = \sum _j v_j \: (mod \, q)$ where $j \neq i$:
+     - Compute $v = | _{j \neq i} \: v_j$:
      - Verify $\psi ^ \ast$ by checking that the output of $Ver(pk_i^ \ast, A | v, \psi ^ \ast)$ is valid or report the culprit and halt.
    - Modify Stored State as follows:
      - Create $S_i^ \ast$  by replacing $pk_i$ with $pk_i^ \ast$ in $S_i$.
@@ -218,11 +218,11 @@ A quorum approved request with a command $C$ from a party $P_i$ associated with 
      - Add $pk_j$ and $\phi _j$ to the broadcast parameters.
 3. For $P_i$, upon receiving an augmented identity challenge from a quorum $S_c$ such that $S_c \subset S_j$ and $j \neq i$, respond to the identity challenge by following the protocol in [section 8.2](#identity-challenge-response) with the following modifications:
      - At the beginning of the identity challenge response protocol, verify that approvals have been received from a quorum $S_c$ by checking that $\exists \, S_c \subset S_j$ such that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A | v_c | C | t, \phi _c)$ is valid or halt.
-     - Compute $v$ as $v = \sum _c v_c \: (mod \, q)$ where $c \neq i$.
+     - Compute $v$ as $v = | _{c \neq i}  \: v_c$.
      - Add $S_c$ to the broadcast parameters.
 4. For all $P_j$ where $j \neq i$:
    - Verify the augmented identity challenge response from $P_i$ by following the protocol in [section 8.3](#identity-challenge-verification) with the following modifications:
-     - Compute $v$ as $v = \sum _c v_c \: (mod \, q)$ where $c \neq i$.
+     - Compute $v$ as $v = | _{c \neq i}  \: v_c$.
    - Verify that a valid quorum $S_c$ such that $S_c \subset S_j$ and $j \neq i$ has approved the request as follows:
      - Verify that $\forall \, pk_c \in S_c , \: pk_c \in S_j$ where $j \neq i$ and $c \neq i$ or report the culprit and halt:
      - Verify that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A | v_c | C | t, \phi _c)$ is valid or report the culprit and halt.
