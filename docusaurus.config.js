@@ -1,7 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const path = require('path');
+const path = require('node:path');
 const lightCodeTheme = require('prism-react-renderer/themes/github');
 const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const math = require('remark-math');
@@ -120,7 +120,7 @@ async function createConfig() {
           style: 'dark',
           links: [
             {
-              title: 'Docs',
+              title: 'Resources',
               items: [
                 {
                   label: 'Whitepaper',
@@ -129,6 +129,10 @@ async function createConfig() {
                 {
                   label: 'Technical Specification',
                   to: '/specification',
+                },
+                {
+                  label: 'Rust Implementation',
+                  href: 'https://github.com/wamutech/wamu-rs',
                 },
               ],
             },
