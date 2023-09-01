@@ -70,12 +70,12 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Wamu: A Protocol for Building Threshold Signature Wallets Controlled by Multiple Decentralized Identities},
+  pdftitle={Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Wamu: A Protocol for Building Threshold Signature Wallets
-Controlled by Multiple Decentralized Identities}
+\title{Wamu: A Protocol for Computation of Threshold Signatures by
+Multiple Decentralized Identities}
 \usepackage{etoolbox}
 \makeatletter
 \providecommand{\subtitle}[1]{% add subtitle to \maketitle
@@ -86,7 +86,7 @@ Controlled by Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{20th July, 2023}
+\date{1st September, 2023 \textbar{} version 1.4}
 
 \begin{document}
 \maketitle
@@ -112,7 +112,7 @@ identity. This is achieved by:
   thus making the signing operation a requirement for reconstructing the
   party's secret share.
 \item
-  Adding peer-to-peer decentralized identity verification to the key
+  Adding peer-to-peer decentralized identity authentication to the key
   generation and signing protocols (and optionally to the key refresh
   protocol) of the threshold signature scheme.
 \item
@@ -136,7 +136,8 @@ asynchronous setting with:
 \textbf{NOTE:} For interoperability with existing wallet solutions, the
 only requirement for decentralized identity providers is the ability to
 compute cryptographic signatures for any arbitrary message in such a way
-that the output signature can be verified in a non-interactive manner.
+that the output signature is 1) deterministic and 2) can be verified in
+a non-interactive manner.
 
 \hypertarget{preliminaries}{%
 \subsection{2. Preliminaries}\label{preliminaries}}
@@ -171,6 +172,8 @@ detail. For these descriptions, we'll use the following notation:
   \(A\) denotes a predefined prefix chosen to ensure that signatures
   computed for identity authentication cannot be valid transaction
   signatures.
+\item
+  \(\Vert\) denotes concatenation.
 \end{itemize}
 
 \textbf{NOTE:} While the augmenting protocols in this document are
@@ -292,13 +295,13 @@ secret shares with the following modifications:
   \item
     The decentralized identity address \(pk_i\).
   \item
-    The signature \(\varphi _i = Sig(sk_i, A | V_i)\).
+    The signature \(\varphi _i = Sig(sk_i, A \Vert V_i)\).
   \end{itemize}
 \item
   At the beginning of Round 2, for each \(P_i\), verify \(\varphi _j\)
   from all \(P_j\) where \(j \neq i\) by checking that the output of
-  \(Ver(pk_j, A | V_j, \varphi _j)\) is valid or report the culprit and
-  halt.
+  \(Ver(pk_j, A \Vert V_j, \varphi _j)\) is valid or report the culprit
+  and halt.
 \item
   After the Output phase, follow the share splitting protocol in
   \protect\hyperlink{share-splitting}{section 3.1} to split secret share
@@ -313,7 +316,7 @@ secret shares with the following modifications:
     Don't store \(x_i\).
   \item
     Add \(pk_i\), \(m_i\), \(\beta _i\) and
-    \(S_i = \{ pk_j : i \neq j \}\) (i.e the set of verified
+    \(S_i = \{ pk_j : j \neq i \}\) (i.e the set of verified
     decentralized identities for all other parties).
   \end{itemize}
 \end{enumerate}
@@ -338,7 +341,7 @@ secret shares with the following modifications:
   \item
     The decentralized identity address \(pk_i\).
   \item
-    The signature \(\varphi _i = Sig(sk_i, A | V_i)\).
+    The signature \(\varphi _i = Sig(sk_i, A \Vert V_i)\).
   \end{itemize}
 \item
   At the beginning of Round 2, for each \(P_i\), verify \(\varphi _j\)
@@ -350,8 +353,8 @@ secret shares with the following modifications:
     Verify that \(pk_i \in S_j\) or report the culprit and halt.
   \item
     Verify \(\varphi _i\) by checking that the output of
-    \(Ver(pk_j, A | V_j, \varphi _j)\) is valid or report the culprit
-    and halt.
+    \(Ver(pk_j, A \Vert V_j, \varphi _j)\) is valid or report the
+    culprit and halt.
   \end{itemize}
 \item
   After the Output phase, follow the share splitting protocol in
@@ -397,7 +400,7 @@ ECDSA signature with the following modifications:
   \item
     The decentralized identity address \(pk_i\).
   \item
-    The signature \(\varphi _i = Sig(sk_i, A | m)\).
+    The signature \(\varphi _i = Sig(sk_i, A \Vert m)\).
   \end{itemize}
 \item
   At the beginning of the Output phase, verify \(\varphi _j\) from all
@@ -409,8 +412,8 @@ ECDSA signature with the following modifications:
     Verify that \(pk_i \in S_j\) or report the culprit and halt.
   \item
     Verify \(\varphi _i\) by checking that the output of
-    \(Ver(pk_i, A | m, \varphi _i)\) is valid or report the culprit and
-    halt.
+    \(Ver(pk_i, A \Vert m, \varphi _i)\) is valid or report the culprit
+    and halt.
   \end{itemize}
 \end{enumerate}
 
@@ -435,7 +438,7 @@ address \(pk_i\) and secret key \(sk_i\):
 \item
   Read the current UTC timestamp \(t\).
 \item
-  Compute the signature \(\varphi = Sig(sk_i, A | C | t)\).
+  Compute the signature \(\varphi = Sig(sk_i, A \Vert C \Vert t)\).
 \item
   Broadcast \(C\), \(pk_i\), \(t\) and \(\varphi\).
 \end{enumerate}
@@ -460,8 +463,8 @@ input:
   authenticated requests or report the culprit and halt.
 \item
   Verify \(\varphi\) by checking that the output of
-  \(Ver(pk_i, A | C | t, \varphi)\) is valid or report the culprit and
-  halt.
+  \(Ver(pk_i, A \Vert C \Vert t, \varphi)\) is valid or report the
+  culprit and halt.
 \end{enumerate}
 
 \hypertarget{identity-challenge}{%
@@ -477,7 +480,7 @@ Initiation}\label{identity-challenge-initiation}}
 To issue an identity challenge to a party \(P_i\) from all verifying
 parties \(P_j\) where \(j \neq i\): 1. Sample a random \(v_j\). 2.
 Broadcast \(v_j\) to all parties, such that all parties can compute
-\(v = | _{j \neq i} \: v_j\).
+\(v = \Vert _{j \neq i} \: v_j\).
 
 \hypertarget{identity-challenge-response}{%
 \paragraph{8.2. Identity Challenge
@@ -491,9 +494,9 @@ parties \(P_j\) where \(j \neq i\):
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Compute \(v = | _{j \neq i} \: v_j\).
+  Compute \(v = \Vert _{j \neq i} \: v_j\).
 \item
-  Compute the signature \(\psi = Sig(sk_i, A | v)\).
+  Compute the signature \(\psi = Sig(sk_i, A \Vert v)\).
 \item
   Broadcast \(\psi\) to all verifying parties \(P_j\).
 \end{enumerate}
@@ -511,10 +514,11 @@ input:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Compute \(v = | _{j \neq i} \: v_j\).
+  Compute \(v = \Vert _{j \neq i} \: v_j\).
 \item
   Verify \(\psi\) by checking that the output of
-  \(Ver(pk_i, A | v, \psi)\) is valid or report the culprit and halt.
+  \(Ver(pk_i, A \Vert v, \psi)\) is valid or report the culprit and
+  halt.
 \end{enumerate}
 
 \hypertarget{identity-rotation}{%
@@ -557,7 +561,7 @@ identity \(I_i^ \ast\) with address \(pk_i^ \ast\) and secret key
   \tightlist
   \item
     Compute an additional signature
-    \(\psi _i^ \ast = Sig(sk_i^ \ast, A | v)\).
+    \(\psi _i^ \ast = Sig(sk_i^ \ast, A \Vert v)\).
   \item
     Add \(pk_i^ \ast\) and \(\psi _i^ \ast\) to the broadcast
     parameters.
@@ -578,10 +582,10 @@ identity \(I_i^ \ast\) with address \(pk_i^ \ast\) and secret key
     \begin{itemize}
     \tightlist
     \item
-      Compute \(v = | _{j \neq i} \: v_j\):
+      Compute \(v = \Vert _{j \neq i} \: v_j\):
     \item
       Verify \(\psi ^ \ast\) by checking that the output of
-      \(Ver(pk_i^ \ast, A | v, \psi ^ \ast)\) is valid or report the
+      \(Ver(pk_i^ \ast, A \Vert v, \psi ^ \ast)\) is valid or report the
       culprit and halt.
     \end{itemize}
   \item
@@ -673,7 +677,8 @@ secret key \(sk_i\) proceeds as follows:
     \begin{itemize}
     \tightlist
     \item
-      Compute a signature \(\phi _j = Sig(sk_j, A | v_j | C | t)\).
+      Compute a signature
+      \(\phi _j = Sig(sk_j, A \Vert v_j \Vert C \Vert t)\).
     \item
       Add \(pk_j\) and \(\phi _j\) to the broadcast parameters.
     \end{itemize}
@@ -692,9 +697,10 @@ secret key \(sk_i\) proceeds as follows:
     that approvals have been received from a quorum \(S_c\) by checking
     that \(\exists \, S_c \subset S_j\) such that
     \(\forall \, pk_c \in S_c\) where \(c \neq i\), the output of
-    \(Ver(pk_c, A | v_c | C | t, \phi _c)\) is valid or halt.
+    \(Ver(pk_c, A \Vert v_c \Vert C \Vert t, \phi _c)\) is valid or
+    halt.
   \item
-    Compute \(v\) as \(v = | _{c \neq i} \: v_c\).
+    Compute \(v\) as \(v = \Vert _{c \neq i} \: v_c\).
   \item
     Add \(S_c\) to the broadcast parameters.
   \end{itemize}
@@ -712,7 +718,7 @@ secret key \(sk_i\) proceeds as follows:
     \begin{itemize}
     \tightlist
     \item
-      Compute \(v\) as \(v = | _{c \neq i} \: v_c\).
+      Compute \(v\) as \(v = \Vert _{c \neq i} \: v_c\).
     \end{itemize}
   \item
     Verify that a valid quorum \(S_c\) such that \(S_c \subset S_j\) and
@@ -725,8 +731,8 @@ secret key \(sk_i\) proceeds as follows:
       \(j \neq i\) and \(c \neq i\) or report the culprit and halt:
     \item
       Verify that \(\forall \, pk_c \in S_c\) where \(c \neq i\), the
-      output of \(Ver(pk_c, A | v_c | C | t, \phi _c)\) is valid or
-      report the culprit and halt.
+      output of \(Ver(pk_c, A \Vert v_c \Vert C \Vert t, \phi _c)\) is
+      valid or report the culprit and halt.
     \end{itemize}
   \end{itemize}
 \end{enumerate}
@@ -829,8 +835,8 @@ Threshold modification would then proceed as follows:
   described above if the quorum approved request succeeds.
 \end{enumerate}
 
-\textbf{NOTE:} Similar modifications can be applied to the signing
-protocol described in section 3.1 and figure 5 of CGGMP20
+\textbf{NOTE:} Similar modifications can be applied to the key
+generation protocol described in section 3.1 and figure 5 of CGGMP20
 {[}\protect\hyperlink{ref-cggmp20}{1}{]} and
 \protect\hyperlink{signing}{section 6} of this document to achieve a
 \(t\)-out-of-\(n\) sharing of the secret key for \(n \geq t+1\). In
@@ -866,7 +872,7 @@ parties}\label{share-recovery-quorum}}
 
 If a quorum of honest parties survives the disastrous event, share
 recovery can be accomplished based on peer-to-peer decentralized
-identity verification.
+identity authentication.
 
 Share recovery for a party \(P_i\) with associated decentralized
 identity \(I_i\) with address \(pk_i\) and secret key \(sk_i\) proceeds

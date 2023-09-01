@@ -34,8 +34,7 @@ async function createConfig() {
 
   return {
     title: 'Wamu',
-    tagline:
-      'A protocol and library for building threshold signature wallets controlled by multiple decentralized identities.',
+    tagline: 'A protocol and library for computation of threshold signatures by multiple decentralized identities.',
     favicon: 'img/logo.svg',
 
     // Production URL.

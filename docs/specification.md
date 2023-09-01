@@ -1,11 +1,11 @@
 ---
-title: "Wamu: A Protocol for Building Threshold Signature Wallets Controlled by Multiple Decentralized Identities"
+title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities"
 subtitle: Technical Specification
 author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 20th July, 2023
+date: 1st September, 2023 | version 1.4
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
@@ -25,7 +25,7 @@ This document describes the Wamu protocol which augments a state-of-the-art non-
 This is achieved by:
 
 - Splitting the secret share for each party between the party and the output of a signing operation by its associated decentralized identity thus making the signing operation a requirement for reconstructing the party's secret share.
-- Adding peer-to-peer decentralized identity verification to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
+- Adding peer-to-peer decentralized identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
 - Defining protocols for identity rotation, share addition and removal, threshold modification and share recovery that build on top of the above 2 augmentations.
 
 Wamu is designed to operate in a decentralized, trust-minimized and asynchronous setting with:
@@ -33,7 +33,7 @@ Wamu is designed to operate in a decentralized, trust-minimized and asynchronous
 - no centralized or trust-based identity infrastructure.
 - signing parties being mainstream consumer devices communicating asynchronously.
 
-**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature can be verified in a non-interactive manner.
+**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
 
 ## 2. Preliminaries {#preliminaries}
 
@@ -50,6 +50,7 @@ For these descriptions, we'll use the following notation:
 - $S$ denotes the set of verified decentralized identities for all parties.
 - $q$ denotes the prime order of the cyclic group of the elliptic curve.
 - $A$ denotes a predefined prefix chosen to ensure that signatures computed for identity authentication cannot be valid transaction signatures.
+- $\Vert$ denotes concatenation.
 
 **NOTE:** While the augmenting protocols in this document are described in relation to the current (circa. 2023) state-of-the-art CGGMP20 [@cggmp20] non-interactive threshold signature scheme for ECDSA signatures, 
 Wamu is a generic protocol that can be adapted to any non-interactive threshold signature scheme (e.g. GG20 [@gg20] and CMP20 [@cmp20]) that allows for asynchronous communication between signing parties.
@@ -94,12 +95,12 @@ Follow the key generation protocol described in section 3.1 and figure 5 of CGGM
 
 1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$ as follows:
    - The decentralized identity address $pk_i$.
-   - The signature $\varphi _i = Sig(sk_i, A | V_i)$.
-2. At the beginning of Round 2, for each $P_i$, verify $\varphi _j$ from all $P_j$ where $j \neq i$ by checking that the output of $Ver(pk_j, A | V_j, \varphi _j)$ is valid or report the culprit and halt.
+   - The signature $\varphi _i = Sig(sk_i, A \Vert V_i)$.
+2. At the beginning of Round 2, for each $P_i$, verify $\varphi _j$ from all $P_j$ where $j \neq i$ by checking that the output of $Ver(pk_j, A \Vert V_j, \varphi _j)$ is valid or report the culprit and halt.
 3. After the Output phase, follow the share splitting protocol in [section 3.1](#share-splitting) to split secret share $x_i$ into a signing share $m_i$ and a sub-share $\beta _i$ for each party $P_i$.
 4. Modify Stored State for each $P_i$ as follows:
    - Don't store $x_i$.
-   - Add $pk_i$, $m_i$, $\beta _i$ and $S_i = \{ pk_j : i \neq j \}$ (i.e the set of verified decentralized identities for all other parties).
+   - Add $pk_i$, $m_i$, $\beta _i$ and $S_i = \{ pk_j : j \neq i \}$ (i.e the set of verified decentralized identities for all other parties).
 
 ## 5. Key Refresh {#key-refresh}
 
@@ -107,10 +108,10 @@ Follow the key refresh protocol described in section 3.2 and figure 6 of CGGMP20
 
 1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$ as follows:
    - The decentralized identity address $pk_i$.
-   - The signature $\varphi _i = Sig(sk_i, A | V_i)$.
+   - The signature $\varphi _i = Sig(sk_i, A \Vert V_i)$.
 2. At the beginning of Round 2, for each $P_i$, verify $\varphi _j$ from all $P_j$ where $j \neq i$ as follows:
    - Verify that $pk_i \in S_j$ or report the culprit and halt.
-   - Verify $\varphi _i$ by checking that the output of $Ver(pk_j, A | V_j, \varphi _j)$ is valid or report the culprit and halt.
+   - Verify $\varphi _i$ by checking that the output of $Ver(pk_j, A \Vert V_j, \varphi _j)$ is valid or report the culprit and halt.
 3. After the Output phase, follow the share splitting protocol in [section 3.1](#share-splitting) to split the new secret share $x_i^\ast$ into a new signing share $m_i^\ast$ and a new sub-share $\beta _i^\ast$ for each party $P_i$.
 4. Modify Stored State for each $P_i$ as follows:
    - Don't store $x_i^\ast$.
@@ -123,10 +124,10 @@ Follow the signing protocol described in sections 4.2 and 4.3 and figure 8 of CG
 1. Before Round 1, for each party $P_i$, follow the share reconstruction protocol in [section 3.2](#share-reconstruction) to reconstruct secret share $x_i$.
 2. At the end of Round 1, for each $P_i$ associated with the decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$, send 2 additional parameters to all $P_j$ where $j \neq i$ as follows:
    - The decentralized identity address $pk_i$.
-   - The signature $\varphi _i = Sig(sk_i, A | m)$.
+   - The signature $\varphi _i = Sig(sk_i, A \Vert m)$.
 3. At the beginning of the Output phase, verify $\varphi _j$ from all $P_j$ where $j \neq i$ as follows:
    - Verify that $pk_i \in S_j$ or report the culprit and halt.
-   - Verify $\varphi _i$ by checking that the output of $Ver(pk_i, A | m, \varphi _i)$ is valid or report the culprit and halt.
+   - Verify $\varphi _i$ by checking that the output of $Ver(pk_i, A \Vert m, \varphi _i)$ is valid or report the culprit and halt.
 
 ## 7. Identity Authenticated Request Initiation and Verification {#identity-authed-request}
 
@@ -137,7 +138,7 @@ Decentralized identity authenticated requests allow parties to perform or reques
 To initiate an identity authenticated request with a command $C$ from a party $P_i$ associated with decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$:
 
 1. Read the current UTC timestamp $t$.
-2. Compute the signature $\varphi = Sig(sk_i, A | C | t)$.
+2. Compute the signature $\varphi = Sig(sk_i, A \Vert C \Vert t)$.
 3. Broadcast $C$, $pk_i$, $t$ and $\varphi$.
 
 ### 7.2. Identity Authenticated Request Verification {#identity-authed-request-verification}
@@ -146,7 +147,7 @@ To verify an identity authenticated request with a command $C$ from a party $P_i
 
 1. Verify that $pk_i \in S_j$ or report the culprit and halt.
 2. Verify that $t$ is within the current epoch for identity authenticated requests or report the culprit and halt.
-3. Verify $\varphi$ by checking that the output of $Ver(pk_i, A | C | t, \varphi)$ is valid or report the culprit and halt.
+3. Verify $\varphi$ by checking that the output of $Ver(pk_i, A \Vert C \Vert t, \varphi)$ is valid or report the culprit and halt.
 
 ## 8. Identity Challenge {#identity-challenge}
 
@@ -156,22 +157,22 @@ Identity challenges are used to verify that a party controls a decentralized ide
 
 To issue an identity challenge to a party $P_i$ from all verifying parties $P_j$ where $j \neq i$:
 1. Sample a random $v_j$. 
-2. Broadcast $v_j$ to all parties, such that all parties can compute $v = | _{j \neq i} \: v_j$.
+2. Broadcast $v_j$ to all parties, such that all parties can compute $v = \Vert _{j \neq i} \: v_j$.
 
 #### 8.2. Identity Challenge Response {#identity-challenge-response}
 
 For a party $P_i$ with associated decentralized identity secret key $sk_i$, to respond to an identity challenge given $v_j$ from all parties $P_j$ where $j \neq i$:
 
-1. Compute $v = | _{j \neq i} \: v_j$. 
-2. Compute the signature $\psi = Sig(sk_i, A | v)$. 
+1. Compute $v = \Vert _{j \neq i} \: v_j$. 
+2. Compute the signature $\psi = Sig(sk_i, A \Vert v)$. 
 3. Broadcast $\psi$ to all verifying parties $P_j$.
 
 #### 8.3. Identity Challenge Response Verification {#identity-challenge-verification}
 
 To verify an identity challenge response from a party $P_i$ given its associated decentralized identity address $pk_i$, a signature $\psi$ and $v_j$ from all verifying parties $P_j$ where $j \neq i$ as input:
 
-1. Compute $v = | _{j \neq i} \: v_j$.
-2. Verify $\psi$ by checking that the output of $Ver(pk_i, A | v, \psi)$ is valid or report the culprit and halt.
+1. Compute $v = \Vert _{j \neq i} \: v_j$.
+2. Verify $\psi$ by checking that the output of $Ver(pk_i, A \Vert v, \psi)$ is valid or report the culprit and halt.
 
 ## 9. Identity Rotation {#identity-rotation}
 
@@ -184,13 +185,13 @@ Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with add
    - Verify the "identity-rotation" request by following the protocol in [section 7.2](#identity-authed-request-verification). 
    - Initiate an identity challenge for $P_i$ by following the protocol in [section 8.1](#identity-challenge-initiation).
 3. For $P_i$, respond to the identity challenge by following the protocol in [section 8.2](#identity-challenge-response) with the following augmentations:
-   - Compute an additional signature $\psi _i^ \ast = Sig(sk_i^ \ast, A | v)$.
+   - Compute an additional signature $\psi _i^ \ast = Sig(sk_i^ \ast, A \Vert v)$.
    - Add $pk_i^ \ast$ and $\psi _i^ \ast$ to the broadcast parameters.
 4. For all $P_j$ where $j \neq i$:
    - Verify the identity challenge response from $P_i$ by following the protocol in [section 8.3](#identity-challenge-verification).
    - Verify that $P_i$ controls the new decentralized identity address $pk_i^ \ast$ as follows:
-     - Compute $v = | _{j \neq i} \: v_j$:
-     - Verify $\psi ^ \ast$ by checking that the output of $Ver(pk_i^ \ast, A | v, \psi ^ \ast)$ is valid or report the culprit and halt.
+     - Compute $v = \Vert _{j \neq i} \: v_j$:
+     - Verify $\psi ^ \ast$ by checking that the output of $Ver(pk_i^ \ast, A \Vert v, \psi ^ \ast)$ is valid or report the culprit and halt.
    - Modify Stored State as follows:
      - Create $S_i^ \ast$  by replacing $pk_i$ with $pk_i^ \ast$ in $S_i$.
      - Replace $S_i$ with $S_i^ \ast$.
@@ -214,18 +215,18 @@ A quorum approved request with a command $C$ from a party $P_i$ associated with 
 2. For all $P_j$ where $j \neq i$ that approve the requested action:
    - Verify the identity authenticated request by following the protocol in [section 7.2](#identity-authed-request-verification).
    - Initiate an identity challenge for $P_i$ by following the protocol in [section 8.1](#identity-challenge-initiation) with the following augmentations:
-     - Compute a signature $\phi _j = Sig(sk_j, A | v_j | C | t)$.
+     - Compute a signature $\phi _j = Sig(sk_j, A \Vert v_j \Vert C \Vert t)$.
      - Add $pk_j$ and $\phi _j$ to the broadcast parameters.
 3. For $P_i$, upon receiving an augmented identity challenge from a quorum $S_c$ such that $S_c \subset S_j$ and $j \neq i$, respond to the identity challenge by following the protocol in [section 8.2](#identity-challenge-response) with the following modifications:
-     - At the beginning of the identity challenge response protocol, verify that approvals have been received from a quorum $S_c$ by checking that $\exists \, S_c \subset S_j$ such that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A | v_c | C | t, \phi _c)$ is valid or halt.
-     - Compute $v$ as $v = | _{c \neq i}  \: v_c$.
+     - At the beginning of the identity challenge response protocol, verify that approvals have been received from a quorum $S_c$ by checking that $\exists \, S_c \subset S_j$ such that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A \Vert v_c \Vert C \Vert t, \phi _c)$ is valid or halt.
+     - Compute $v$ as $v = \Vert _{c \neq i}  \: v_c$.
      - Add $S_c$ to the broadcast parameters.
 4. For all $P_j$ where $j \neq i$:
    - Verify the augmented identity challenge response from $P_i$ by following the protocol in [section 8.3](#identity-challenge-verification) with the following modifications:
-     - Compute $v$ as $v = | _{c \neq i}  \: v_c$.
+     - Compute $v$ as $v = \Vert _{c \neq i}  \: v_c$.
    - Verify that a valid quorum $S_c$ such that $S_c \subset S_j$ and $j \neq i$ has approved the request as follows:
      - Verify that $\forall \, pk_c \in S_c , \: pk_c \in S_j$ where $j \neq i$ and $c \neq i$ or report the culprit and halt:
-     - Verify that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A | v_c | C | t, \phi _c)$ is valid or report the culprit and halt.
+     - Verify that $\forall \, pk_c \in S_c$ where $c \neq i$, the output of $Ver(pk_c, A \Vert v_c \Vert C \Vert t, \phi _c)$ is valid or report the culprit and halt.
 
 ## 11. Share Addition and Removal {#share-addition-and-removal}
 
@@ -261,7 +262,7 @@ Threshold modification would then proceed as follows:
 1. Initiate a quorum approved "threshold-modification" request by following the protocol in [section 10](#quorum-approved-request).
 2. Follow the key refresh protocol described in [section 5](#key-refresh) with the modifications described above if the quorum approved request succeeds.
 
-**NOTE:** Similar modifications can be applied to the signing protocol described in section 3.1 and figure 5 of CGGMP20 [@cggmp20] and [section 6](#signing) of this document to achieve a $t$-out-of-$n$ sharing of the secret key for $n \geq t+1$.
+**NOTE:** Similar modifications can be applied to the key generation protocol described in section 3.1 and figure 5 of CGGMP20 [@cggmp20] and [section 6](#signing) of this document to achieve a $t$-out-of-$n$ sharing of the secret key for $n \geq t+1$.
 In particular, this entails performing a $t$-out-of-$n$ Feldman's VSS [@feldman-vss] sharing of the value $x_i$ (as defined in section 3.1 of CGGMP20 [@cggmp20]), based on the same modifications from GG20 [@gg20] and GG18 [@gg18] described above, and following the instructions in section 1.2.8 of CGGMP20 [@cggmp20].
 
 ## 13. Share Recovery {#share-recovery}
@@ -274,7 +275,7 @@ In either case, there are two options for share recovery depending on:
 
 ### 13.1. Share recovery with a surviving quorum of honest parties {#share-recovery-quorum}
 
-If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity verification.
+If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity authentication.
 
 Share recovery for a party $P_i$ with associated decentralized identity $I_i$ with address $pk_i$ and secret key $sk_i$ proceeds as follows:
 

@@ -1,10 +1,10 @@
 ---
-title: "Wamu: A Protocol for Building Threshold Signature Wallets Controlled by Multiple Decentralized Identities"
+title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities"
 author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 11th July, 2023
+date: 1st September, 2023 | version 1.3
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -22,9 +22,9 @@ paper:
 
 Multisig wallets (e.g. Safe [^1]) are already widely adopted [^2] and have proven the importance of noncustodial shared wallets with threshold access structures controlled by multiple decentralized identities, for mainstream users and decentralized teams and organizations.
 
-However, threshold signature wallets have some unique benefits over multisig wallets including: cost-effectiveness, universal interoperability, and enhanced privacy and security.
+However, threshold signatures have some unique benefits over multisig wallets including: cost-effectiveness, universal interoperability, and enhanced privacy and security.
 
-This is because while multiple parties each independently sign a transaction and the set of signatures is evaluated against the access structure/security policy on-chain for multisig wallets, threshold signature wallets instead use a threshold signature scheme to allow multiple parties to jointly compute a single signature that's similar to those computed by traditional wallets (e.g. Metamask [^3]).
+This is because while multiple parties each independently sign a transaction and the set of signatures is evaluated against the access structure/security policy on-chain for multisig wallets, threshold signature schemes instead allow multiple parties to jointly compute a single signature that's similar to those computed by traditional single-party wallets (e.g. Metamask [^3]).
 
 ### 1.1. Problem {#problem}
 
@@ -45,10 +45,10 @@ To remove the need for centralized and/or trust-based identity systems, and prov
 This is achieved by:
 
 - Splitting the secret share for each party between the party and the output of a signing operation by its associated decentralized identity thus making the signing operation a requirement for reconstructing the party's secret share as described in [section 3](#share-splitting-and-reconstruction).
-- Adding peer-to-peer decentralized identity verification to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
+- Adding peer-to-peer decentralized identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
 - Defining protocols for identity rotation, share addition and removal, threshold modification and share recovery (as described in [section 4](#share-recovery)) that build on top of the above 2 augmentations.
 
-**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature can be verified in a non-interactive manner.
+**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
 
 ## 2. Preliminaries {#preliminaries}
 
@@ -61,8 +61,8 @@ For these descriptions, we'll use the following notation:
 - $Sig$ denotes a signing algorithm.
 - $q$ denotes the prime order of the cyclic group of the elliptic curve.
 
-**NOTE:** While the share splitting and reconstruction protocol is described in technical detail in this document, for simplicity, the share recovery protocol is only described at a high-level and no technical detail is provided for decentralized identity verification and rest of Wamu's sub-protocols. 
-We refer the reader to Wamu's technical specification for the technical details that are not provided in this document.
+**NOTE:** While the share splitting and reconstruction protocol is described in technical detail in this document, for simplicity, the share recovery protocol is only described at a high-level and no technical detail is provided for decentralized identity authentication and rest of Wamu's sub-protocols. 
+We refer the reader to Wamu's technical specification [@wamu] for the technical details that are not provided in this document.
 
 ## 3. Share Splitting and Reconstruction {#share-splitting-and-reconstruction}
 
@@ -108,7 +108,7 @@ In either case, there are two options for share recovery depending on:
 
 ### 4.1. Share recovery with a surviving quorum of honest parties {#share-recovery-quorum}
 
-If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity verification.
+If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity authentication.
 
 The party $P_i$ that needs to recover its secret share initiates a signature-authenticated share recovery request leveraging its associated decentralized identity $I_i$. 
 The surviving quorum of honest parties collectively verify the request, and then initiate the key refresh protocol of the threshold signature scheme with $P_i$ participating if $I_i$ matches a previously verified decentralized identity for a signatory.
@@ -138,10 +138,10 @@ Lastly, the "backup" signing share $m^ \ast$ can be generated based on user inpu
 
 ## 5. Conclusion {#conclusion}
 
-The Wamu project (meaning "together") aims to unlock the benefits of threshold signature wallets for decentralized teams and organizations, and mainstream users that require noncustodial shared wallets with threshold access structures by:
+The Wamu project (meaning "together") aims to unlock the benefits of threshold signatures for decentralized teams and organizations, and mainstream users that require noncustodial shared wallets with threshold access structures by:
 
 - Defining an open protocol that encourages research into and development of mainstream multi-user threshold signature wallet solutions.
-- Providing modular and performant, free and open-source building blocks that allow software developers to either build new mainstream multi-user threshold signature wallets or integrate state-of-the-art threshold signature schemes into existing mainstream wallets.
+- Providing modular, performant, free and open-source building blocks that allow software developers to either build new mainstream multi-user threshold signature wallets or integrate state-of-the-art threshold signature schemes into existing mainstream wallets.
 
 ## 6. Acknowledgements {#acknowledgements}
 

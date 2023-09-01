@@ -70,16 +70,16 @@
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Wamu: A Protocol for Building Threshold Signature Wallets Controlled by Multiple Decentralized Identities},
+  pdftitle={Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
-\title{Wamu: A Protocol for Building Threshold Signature Wallets
-Controlled by Multiple Decentralized Identities}
+\title{Wamu: A Protocol for Computation of Threshold Signatures by
+Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{11th July, 2023}
+\date{1st September, 2023 \textbar{} version 1.3}
 
 \begin{document}
 \maketitle
@@ -98,16 +98,16 @@ of noncustodial shared wallets with threshold access structures
 controlled by multiple decentralized identities, for mainstream users
 and decentralized teams and organizations.
 
-However, threshold signature wallets have some unique benefits over
-multisig wallets including: cost-effectiveness, universal
-interoperability, and enhanced privacy and security.
+However, threshold signatures have some unique benefits over multisig
+wallets including: cost-effectiveness, universal interoperability, and
+enhanced privacy and security.
 
 This is because while multiple parties each independently sign a
 transaction and the set of signatures is evaluated against the access
 structure/security policy on-chain for multisig wallets, threshold
-signature wallets instead use a threshold signature scheme to allow
-multiple parties to jointly compute a single signature that's similar to
-those computed by traditional wallets (e.g.~Metamask \footnote{MetaMask.
+signature schemes instead allow multiple parties to jointly compute a
+single signature that's similar to those computed by traditional
+single-party wallets (e.g.~Metamask \footnote{MetaMask.
   \url{https://metamask.io}}).
 
 \hypertarget{problem}{%
@@ -180,7 +180,7 @@ achieved by:
   party's secret share as described in
   \protect\hyperlink{share-splitting-and-reconstruction}{section 3}.
 \item
-  Adding peer-to-peer decentralized identity verification to the key
+  Adding peer-to-peer decentralized identity authentication to the key
   generation and signing protocols (and optionally to the key refresh
   protocol) of the threshold signature scheme.
 \item
@@ -193,7 +193,8 @@ achieved by:
 \textbf{NOTE:} For interoperability with existing wallet solutions, the
 only requirement for decentralized identity providers is the ability to
 compute cryptographic signatures for any arbitrary message in such a way
-that the output signature can be verified in a non-interactive manner.
+that the output signature is 1) deterministic and 2) can be verified in
+a non-interactive manner.
 
 \hypertarget{preliminaries}{%
 \subsection{2. Preliminaries}\label{preliminaries}}
@@ -220,10 +221,10 @@ descriptions, we'll use the following notation:
 \textbf{NOTE:} While the share splitting and reconstruction protocol is
 described in technical detail in this document, for simplicity, the
 share recovery protocol is only described at a high-level and no
-technical detail is provided for decentralized identity verification and
-rest of Wamu's sub-protocols. We refer the reader to Wamu's technical
-specification for the technical details that are not provided in this
-document.
+technical detail is provided for decentralized identity authentication
+and rest of Wamu's sub-protocols. We refer the reader to Wamu's
+technical specification {[}\protect\hyperlink{ref-wamu}{4}{]} for the
+technical details that are not provided in this document.
 
 \hypertarget{share-splitting-and-reconstruction}{%
 \subsection{3. Share Splitting and
@@ -241,7 +242,7 @@ message as the ``signing share'') and computing a ``sub-share''
 \(m\) needs to be signed by \(I\) using \(Sig\) to produce another
 ``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are shares
 of \(x\) under Shamir's secret-sharing scheme
-{[}\protect\hyperlink{ref-sss79}{4}{]}.
+{[}\protect\hyperlink{ref-sss79}{5}{]}.
 
 \textbf{NOTE:} Share splitting and reconstruction is a single-party
 localized concern that happens after (and is not related to) the
@@ -269,7 +270,7 @@ proceeds as follows:
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
   (i.e.~Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{5}{]})
+  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]})
 \item
   Compute another point \(\beta\) from \(L\) such that
   \(\beta \neq \alpha\), \(\beta\) becomes the second sub-share of
@@ -299,7 +300,7 @@ reconstruction protocol proceeds as follows:
   \(\alpha = (r, s) \: (\bmod \, q)\).
 \item
   Generate a line \(L\) by performing Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{5}{]} using \(\alpha\)
+  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]} using \(\alpha\)
   and \(\beta\) as inputs.
 \item
   Compute \(x\) as the constant term of \(L\).
@@ -338,7 +339,7 @@ parties}\label{share-recovery-quorum}}
 
 If a quorum of honest parties survives the disastrous event, share
 recovery can be accomplished based on peer-to-peer decentralized
-identity verification.
+identity authentication.
 
 The party \(P_i\) that needs to recover its secret share initiates a
 signature-authenticated share recovery request leveraging its associated
@@ -417,9 +418,9 @@ a security-usability tradeoff.
 \subsection{5. Conclusion}\label{conclusion}}
 
 The Wamu project (meaning ``together'') aims to unlock the benefits of
-threshold signature wallets for decentralized teams and organizations,
-and mainstream users that require noncustodial shared wallets with
-threshold access structures by:
+threshold signatures for decentralized teams and organizations, and
+mainstream users that require noncustodial shared wallets with threshold
+access structures by:
 
 \begin{itemize}
 \tightlist
@@ -428,7 +429,7 @@ threshold access structures by:
   development of mainstream multi-user threshold signature wallet
   solutions.
 \item
-  Providing modular and performant, free and open-source building blocks
+  Providing modular, performant, free and open-source building blocks
   that allow software developers to either build new mainstream
   multi-user threshold signature wallets or integrate state-of-the-art
   threshold signature schemes into existing mainstream wallets.
@@ -466,14 +467,21 @@ ECDSA with identifiable abort. Cryptology ePrint Archive, Paper
 non-interactive, proactive, threshold ECDSA. Cryptology ePrint Archive,
 Paper 2020/492. \url{https://eprint.iacr.org/2020/492}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
+\leavevmode\vadjust pre{\hypertarget{ref-wamu}{}}%
 \CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{Wamu: A protocol for computation of threshold signatures
+by multiple decentralized identities:
+\href{https://wamu.tech/specification}{\emph{https://wamu.tech/specification}}.
+Accessed: 2023-05-15.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
+\CSLLeftMargin{{[}5{]} }%
 \CSLRightInline{Shamir, A. 1979. How to share a secret. \emph{Commun.
 ACM}. 22, 11 (Nov. 1979), 612--613.
 DOI:https://doi.org/\href{https://doi.org/10.1145/359168.359176}{10.1145/359168.359176}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-wiki:interpolation}{}}%
-\CSLLeftMargin{{[}5{]} }%
+\CSLLeftMargin{{[}6{]} }%
 \CSLRightInline{Wikipedia. Polynomial interpolation:
 \href{https://en.wikipedia.org/wiki/Polynomial_interpolation}{\emph{https://en.wikipedia.org/wiki/Polynomial\_interpolation}}.
 Accessed: 2023-05-12.}
