@@ -79,7 +79,7 @@ Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{1st September, 2023 \textbar{} version 1.3}
+\date{10th October, 2023 \textbar{} version 1.4}
 
 \begin{document}
 \maketitle
@@ -113,8 +113,8 @@ single-party wallets (e.g.~Metamask \footnote{MetaMask.
 \hypertarget{problem}{%
 \subsubsection{1.1. Problem}\label{problem}}
 
-Despite the aforementioned benefits, there is currently no mainstream
-threshold signature wallet alternative to multisig wallets for
+Despite the aforementioned benefits, there are currently no mainstream
+threshold signature wallet alternatives to multisig wallets for
 decentralized teams and organizations that require noncustodial shared
 wallets with threshold access structures because:
 
@@ -175,9 +175,9 @@ achieved by:
 \tightlist
 \item
   Splitting the secret share for each party between the party and the
-  output of a signing operation by its associated decentralized identity
-  thus making the signing operation a requirement for reconstructing the
-  party's secret share as described in
+  output of a signing operation by its associated decentralized
+  identity, thus making the signing operation a requirement for
+  reconstructing the party's secret share as described in
   \protect\hyperlink{share-splitting-and-reconstruction}{section 3}.
 \item
   Adding peer-to-peer decentralized identity authentication to the key
@@ -212,7 +212,7 @@ descriptions, we'll use the following notation:
 \item
   \(sk\) denotes the secret key of a decentralized identity.
 \item
-  \(Sig\) denotes a signing algorithm.
+  \(\mathtt{Sig}\) denotes a signing algorithm.
 \item
   \(q\) denotes the prime order of the cyclic group of the elliptic
   curve.
@@ -222,7 +222,7 @@ descriptions, we'll use the following notation:
 described in technical detail in this document, for simplicity, the
 share recovery protocol is only described at a high-level and no
 technical detail is provided for decentralized identity authentication
-and rest of Wamu's sub-protocols. We refer the reader to Wamu's
+and the rest of Wamu's sub-protocols. We refer the reader to Wamu's
 technical specification {[}\protect\hyperlink{ref-wamu}{4}{]} for the
 technical details that are not provided in this document.
 
@@ -233,15 +233,16 @@ Reconstruction}\label{share-splitting-and-reconstruction}}
 Assuming that we have a secret share \(x\) for a party \(P\) with an
 associated decentralized identity \(I\), the share splitting and
 reconstruction protocol describes how to split \(x\) between \(P\) and
-the output of a signing operation \(Sig\) by \(I\) so that the output of
-\(Sig\) is required to reconstruct the secret share \(x\).
+the output of a signing operation \(\mathtt{Sig}\) by \(I\) so that the
+output of \(\mathtt{Sig}\) is required to reconstruct the secret share
+\(x\).
 
-This is achieved by generating a message \(m\) (we'll refer to this
+This is achieved by generating a message \(k\) (we'll refer to this
 message as the ``signing share'') and computing a ``sub-share''
 \(\beta\) (i.e a share of the secret share \(x\)) in such a way that
-\(m\) needs to be signed by \(I\) using \(Sig\) to produce another
-``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are shares
-of \(x\) under Shamir's secret-sharing scheme
+\(k\) needs to be signed by \(I\) using \(\mathtt{Sig}\) to produce
+another ``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are
+shares of \(x\) under Shamir's secret-sharing scheme
 {[}\protect\hyperlink{ref-sss79}{5}{]}.
 
 \textbf{NOTE:} Share splitting and reconstruction is a single-party
@@ -260,12 +261,12 @@ proceeds as follows:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Sample a random message \(m\) (i.e.~the signing share).
+  Sample a random message \(k\) (i.e.~the signing share).
 \item
-  Compute a signature \((r, s) = Sig(sk, m)\).
+  Compute a signature \((r, s) \leftarrow \mathtt{Sig}(sk, k)\).
 \item
   Compute the first sub-share of \(x\) as the point
-  \(\alpha = (r, s) \: (\bmod \, q)\).
+  \(\alpha = (r, s) \pmod q\).
 \item
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
@@ -278,13 +279,13 @@ proceeds as follows:
 \item
   Erase both \(\alpha\) and \(L\) from memory.
 \item
-  Return the signing share \(m\) and the sub-share \(\beta\).
+  Return the signing share \(k\) and the sub-share \(\beta\).
 \end{enumerate}
 
 \hypertarget{share-reconstruction}{%
 \subsubsection{3.2. Share reconstruction}\label{share-reconstruction}}
 
-Given a signing share \(m\) and a sub-share \(\beta\) as input (i.e.~the
+Given a signing share \(k\) and a sub-share \(\beta\) as input (i.e.~the
 outputs of the share splitting protocol in
 \protect\hyperlink{share-splitting}{section 3.1} above) and access to
 the decentralized identity \(I\) with secret key \(sk\), the share
@@ -294,10 +295,10 @@ reconstruction protocol proceeds as follows:
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Compute a signature \((r, s) = Sig(sk, m)\).
+  Compute a signature \((r, s) \leftarrow \mathtt{Sig}(sk, k)\).
 \item
   Compute a sub-share \(\alpha\) as the point
-  \(\alpha = (r, s) \: (\bmod \, q)\).
+  \(\alpha = (r, s) \pmod q\).
 \item
   Generate a line \(L\) by performing Polynomial Interpolation
   {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]} using \(\alpha\)
@@ -311,10 +312,10 @@ reconstruction protocol proceeds as follows:
 \end{enumerate}
 
 \textbf{NOTE:} For ECDSA signatures, the parameters \(r\) and \(s\) in
-\((r, s) = Sig(sk, m)\) are already computed modulo \(q\). We use the
-notation \(\alpha = (r, s) \: (\bmod \, q)\) for the sub-share to make
-it clear (at a glance) that the sub-shares are computed using finite
-field arithmetic.
+\((r, s) \leftarrow \mathtt{Sig}(sk, k)\) are already computed modulo
+\(q\). We use the notation \(\alpha = (r, s) \pmod q\) for the sub-share
+to make it clear (at a glance) that the sub-shares are computed using
+finite field arithmetic.
 
 \hypertarget{share-recovery}{%
 \subsection{4. Share Recovery}\label{share-recovery}}
@@ -328,7 +329,7 @@ either case, there are two options for share recovery depending on:
 \item
   A quorum of honest parties surviving the disastrous event.
 \item
-  A backup (preferably encrypted) of a signing share \(m\) and sub-share
+  A backup (preferably encrypted) of a signing share \(k\) and sub-share
   \(\beta\) pair on user-controlled secondary or device-independent
   storage.
 \end{itemize}
@@ -360,14 +361,14 @@ backup}\label{share-recovery-backup-overview}}
 From the share splitting and reconstruction protocol in
 \protect\hyperlink{share-splitting-and-reconstruction}{section 3} above,
 we note that for any party \(P\), the combination of a signing share
-\(m\) and a sub-share \(\beta\) alone is insufficient to reconstruct the
-secret share \(x\). This is because a signature of \(m\) from the
+\(k\) and a sub-share \(\beta\) alone is insufficient to reconstruct the
+secret share \(x\). This is because a signature of \(k\) from the
 decentralized identity \(I\) is required to compute the sub-share
 \(\alpha\), so that \(\alpha\) and \(\beta\) can then be used to
 reconstruct \(L\) and compute the secret share \(x\) as the constant
 term of \(L\).
 
-Therefore, a signing share \(m\) and sub-share \(\beta\) pair can be
+Therefore, a signing share \(k\) and sub-share \(\beta\) pair can be
 safely backed up to user-controlled secondary (e.g.~a secondary device
 or a flash drive) or device-independent storage (e.g.~Apple iCloud
 \footnote{Apple iCloud. \url{https://www.icloud.com}.}, Google Drive
@@ -383,32 +384,32 @@ backup}\label{share-recovery-backup-encrypted}}
 
 For increased security, a signature of a standardized phrase can be used
 as entropy for generating an encryption secret which can then be used to
-encrypt the signing share \(m\) and the sub-share \(\beta\) using a
+encrypt the signing share \(k\) and the sub-share \(\beta\) using a
 symmetric encryption algorithm before saving them to back up storage.
 Share recovery would then start by signing this standardized phrase,
 using the signature to recreate the encryption secret and then
-decrypting the encrypted backup to retrieve the signing share \(m\) and
+decrypting the encrypted backup to retrieve the signing share \(k\) and
 the sub-share \(\beta\).
 
 \hypertarget{share-recovery-backup-enhancements}{%
 \paragraph{4.2.3. Further security and usability considerations for
 share recovery with a backup}\label{share-recovery-backup-enhancements}}
 
-For further improved security and usability, the signing share \(m\) can
+For further improved security and usability, the signing share \(k\) can
 be prefixed with a custom message that alerts the user to the purpose of
 the signature. This can help reduce the effectiveness of an adversary
 that gains access to the backup and tries to trick the user into signing
 \(m\).
 
 Additionally, it's possible to rerun the share splitting protocol to
-generate a new pair of a signing share \(m^ \ast\) and a sub-share
-\(\beta ^ \ast\) such that \(m^ \ast \neq m\),
+generate a new pair of a signing share \(k^ \ast\) and a sub-share
+\(\beta ^ \ast\) such that \(k^ \ast \neq k\),
 \(\beta ^ \ast \neq \beta\) and \(L^ \ast \neq L\) to be specifically
 used for backup and recovery. This gives us the option to have separate
 signing shares for backup and recovery with customized prefixes that
 make it clear to the user that they're signing a backup signing share.
 
-Lastly, the ``backup'' signing share \(m^ \ast\) can be generated based
+Lastly, the ``backup'' signing share \(k^ \ast\) can be generated based
 on user input (e.g.~a passphrase or security questions) removing the
 need for it to be backed up together with a sub-share \(\beta ^ \ast\)
 but instead relying on the user to provide this input during recovery as
