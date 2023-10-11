@@ -14,7 +14,15 @@ function HomepageHeader() {
     <header className={clsx('hero hero--primary', styles.heroBanner)}>
       <div className="container">
         <h1 className="hero__title">{siteConfig.title}</h1>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="hero__subtitle">
+          A protocol and library for computation of{' '}
+          <Link href="https://en.wikipedia.org/wiki/Threshold_cryptosystem#Methodology">threshold signatures</Link> by
+          multiple{' '}
+          <Link href="https://ethereum.org/en/decentralized-identity/#what-are-decentralized-identifiers">
+            decentralized identities
+          </Link>
+          .
+        </p>
         <div className={styles.buttons}>
           <Link className="button button--secondary button--lg" to="/whitepaper">
             Read the Whitepaper - 10min ⏱️
