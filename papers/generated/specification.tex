@@ -86,7 +86,7 @@ Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{10th October, 2023 \textbar{} version 1.5}
+\date{13th November, 2023 \textbar{} version 1.6}
 
 \begin{document}
 \maketitle
@@ -116,9 +116,10 @@ identity. This is achieved by:
   generation and signing protocols (and optionally to the key refresh
   protocol) of the threshold signature scheme.
 \item
-  Defining protocols for identity rotation, share addition and removal,
-  threshold modification and share recovery that build on top of the
-  above 2 augmentations.
+  Defining protocols for identity rotation, access structure
+  modification (i.e.~share addition and removal and threshold
+  modification) and share recovery that build on top of the above 2
+  augmentations.
 \end{itemize}
 
 Wamu is designed to operate in a decentralized, trust-minimized and
@@ -183,8 +184,9 @@ described in relation to the current (circa. 2023) state-of-the-art
 CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} non-interactive
 threshold signature scheme for ECDSA signatures, Wamu is a generic
 protocol that can be adapted to any non-interactive threshold signature
-scheme (e.g.~GG20 {[}\protect\hyperlink{ref-gg20}{2}{]} and CMP20
-{[}\protect\hyperlink{ref-cmp20}{3}{]}) that allows for asynchronous
+scheme (e.g.~GG20 {[}\protect\hyperlink{ref-gg20}{2}{]}, CMP20
+{[}\protect\hyperlink{ref-cmp20}{3}{]} and FROST20
+{[}\protect\hyperlink{ref-frost20}{4}{]}) that allows for asynchronous
 communication between signing parties.
 
 \hypertarget{share-splitting-and-reconstruction}{%
@@ -203,7 +205,7 @@ message as the ``signing share'') and computing a ``sub-share''
 \(k\) needs to be signed by \(I\) using \(\mathtt{Sig}\) to produce
 another ``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are
 shares of \(x\) under Shamir's secret-sharing scheme
-{[}\protect\hyperlink{ref-sss79}{4}{]}.
+{[}\protect\hyperlink{ref-sss79}{5}{]}.
 
 \textbf{NOTE:} Share splitting and reconstruction is a single-party
 localized concern that happens after (and is not related to) the
@@ -231,7 +233,7 @@ proceeds as follows:
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
   (i.e.~Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{5}{]})
+  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]})
 \item
   Compute another point \(\beta\) from \(L\) such that
   \(\beta \neq \alpha\), \(\beta\) becomes the second sub-share of
@@ -261,7 +263,7 @@ reconstruction protocol proceeds as follows:
   \(\alpha = (r, s) \pmod q\).
 \item
   Generate the line \(L\) by performing Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{5}{]} using \(\alpha\)
+  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]} using \(\alpha\)
   and \(\beta\) as inputs.
 \item
   Compute \(x\) as the constant term of \(L\).
@@ -271,14 +273,71 @@ reconstruction protocol proceeds as follows:
   Return \(x\) as the secret share.
 \end{enumerate}
 
-\textbf{NOTE:} For ECDSA signatures, the parameters \(r\) and \(s\) in
+\textbf{NOTE:} The signature parameters \(r\) and \(s\) in
 \((r, s) \leftarrow \mathtt{Sig}(sk, k)\) are already computed modulo
 \(q\). We use the notation \(\alpha \leftarrow (r, s) \pmod q\) for the
 sub-share to make it clear (at a glance) that the sub-shares are
 computed using finite field arithmetic.
 
+\hypertarget{augmentations}{%
+\subsection{4. Threshold Signature Scheme
+Augmentations}\label{augmentations}}
+
+The general approach for augmenting threshold signature protocols
+(i.e.~key generation and signing - and optionally key refresh) is for
+each party to sign a non-interactive replay resistant challenge during
+the first round of communication to prove that it currently controls the
+associated decentralized identity. The other parties then verify the
+challenge signature at the beginning of the next round or identify the
+culprit and halt.
+
+Key generation and key refresh protocols typically include a commitment
+to secret and random values in their first round while signing includes
+an arbitrary message, so either a commitment (e.g.~for key generation
+and key refresh) or the message (e.g.~for signing) is unambiguously
+concatenated with a protocol specific prefix and the current timestamp
+to generate a non-interactive replay resistant challenge.
+
+\textbf{NOTE:} While most threshold signature schemes don't define a key
+refresh protocol (e.g.~GG20 {[}\protect\hyperlink{ref-gg20}{2}{]} and
+FROST20 {[}\protect\hyperlink{ref-frost20}{4}{]}), it is relatively
+straightforward to derive such a protocol from a standard proactive
+secret sharing scheme like HJKY95
+{[}\protect\hyperlink{ref-hjky95}{7}{]}. However, for applications that
+require support for access structure modification, it is preferable to
+derive a key refresh protocol from a share redistribution scheme like
+DJ97 {[}\protect\hyperlink{ref-dj97}{8}{]} or WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]}, as the latter are more flexible
+and allow for both proactive security and access structure changes (see
+\protect\hyperlink{access-structure-modification}{section 6} for details
+and additional considerations).
+
+\textbf{NOTE:} While general \((t, n)\) sharing (and specifically the
+case where \(t < n\)) is not formally specified in CGGMP20
+{[}\protect\hyperlink{ref-cggmp20}{1}{]}, it can be derived in a
+relatively straightforward manner based on GG18
+{[}\protect\hyperlink{ref-gg18}{10}{]} (and GG20
+{[}\protect\hyperlink{ref-gg20}{2}{]}) for the key generation and
+signing protocols (as described in section 1.2.8 of CGGMP20
+{[}\protect\hyperlink{ref-cggmp20}{1}{]}) and HJKY95
+{[}\protect\hyperlink{ref-hjky95}{7}{]} (or WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]}) for the key refresh protocol. In
+particular, this entails performing \(t\)-out-of-\(n\) Feldman's
+verifiable secret sharing {[}\protect\hyperlink{ref-feldman-vss}{11}{]}
+of the secret shares for key generation (as described in section 2.8 and
+phase 2 of section 3.1 in GG20 {[}\protect\hyperlink{ref-gg20}{2}{]} and
+similarly in section 2.6 and phase 2 of section 4.1 in GG18
+{[}\protect\hyperlink{ref-gg18}{10}{]}) or refresh shares for key
+refresh (with some modifications as described in sections 3.3 and 3.4 of
+HJKY95 {[}\protect\hyperlink{ref-hjky95}{7}{]} or in section 4 of WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]}), and transforming \((t, n)\) to
+\((t, t+1)\) shares (using the appropriate Lagrangian coefficients) for
+pre-signing and signing (as described in section 3.2 in GG20
+{[}\protect\hyperlink{ref-gg20}{2}{]} and similarly in section 4.2 in
+GG18 {[}\protect\hyperlink{ref-gg18}{10}{]}).
+
 \hypertarget{key-generation}{%
-\subsection{4. Key Generation}\label{key-generation}}
+\subsubsection{4.1. Key Generation}\label{key-generation}}
 
 Follow the key generation protocol described in section 3.1 and figure 5
 of CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} to generate ECDSA
@@ -297,8 +356,10 @@ secret shares with the following modifications:
   \item
     The decentralized identity verifying key \(vk_i\).
   \item
+    The current UTC timestamp \(\Delta\).
+  \item
     The signature
-    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert V_i)\).
+    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert V_i)\).
   \end{itemize}
 \item
   At the beginning of Round 2, for each \(P_i\), verify \(\sigma _j\)
@@ -310,8 +371,8 @@ secret shares with the following modifications:
     Verify that \(vk_i \in \mathcal{S}\) or report the culprit and halt.
   \item
     Verify \(\sigma _j\) by checking that the output of
-    \(\mathtt{Ver}(vk_j, A \Vert V_j, \sigma _j)\) is valid or report
-    the culprit and halt.
+    \(\mathtt{Ver}(vk_j, A \Vert \Delta \Vert V_j, \sigma _j)\) is valid
+    or report the culprit and halt.
   \end{itemize}
 \item
   After the Output phase, follow the share splitting protocol in
@@ -330,62 +391,8 @@ secret shares with the following modifications:
   \end{itemize}
 \end{enumerate}
 
-\hypertarget{key-refresh}{%
-\subsection{5. Key Refresh}\label{key-refresh}}
-
-Follow the key refresh protocol described in section 3.2 and figure 6 of
-CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} to generate new ECDSA
-secret shares with the following modifications:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  At the end of Round 1, broadcast 2 additional parameters for each
-  \(P_i\) associated with the decentralized identity \(I_i\) with
-  verifying key \(vk_i\) and secret key \(sk_i\) as follows:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    The decentralized identity verifying key \(vk_i\).
-  \item
-    The signature
-    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert V_i)\).
-  \end{itemize}
-\item
-  At the beginning of Round 2, for each \(P_i\), verify \(\sigma _j\)
-  from all \(P_j\) where \(j \neq i\) as follows:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Verify that \(vk_i \in \mathcal{S}\) or report the culprit and halt.
-  \item
-    Verify \(\sigma _i\) by checking that the output of
-    \(\mathtt{Ver}(vk_j, A \Vert V_j, \sigma _j)\) is valid or report
-    the culprit and halt.
-  \end{itemize}
-\item
-  After the Output phase, follow the share splitting protocol in
-  \protect\hyperlink{share-splitting}{section 3.1} to split the new
-  secret share \(x_i^\ast\) into a new signing share \(k_i^\ast\) and a
-  new sub-share \(\beta _i^\ast\) for each party \(P_i\).
-\item
-  Modify Stored State for each \(P_i\) as follows:
-
-  \begin{itemize}
-  \tightlist
-  \item
-    Don't store \(x_i^\ast\).
-  \item
-    Replace \(k_i\) with \(k_i^\ast\) and \(\beta _i\) with
-    \(\beta _i^\ast\).
-  \end{itemize}
-\end{enumerate}
-
 \hypertarget{signing}{%
-\subsection{6. Signing}\label{signing}}
+\subsubsection{4.2. Signing}\label{signing}}
 
 Follow the signing protocol described in sections 4.2 and 4.3 and figure
 8 of CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} to generate an
@@ -410,8 +417,10 @@ ECDSA signature with the following modifications:
   \item
     The decentralized identity verifying key \(vk_i\).
   \item
+    The current UTC timestamp \(\Delta\).
+  \item
     The signature
-    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert m)\).
+    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert m)\).
   \end{itemize}
 \item
   At the beginning of the Output phase, verify \(\sigma _j\) from all
@@ -422,21 +431,84 @@ ECDSA signature with the following modifications:
   \item
     Verify that \(vk_i \in \mathcal{S}\) or report the culprit and halt.
   \item
+    Verify that \(t\) is within the current epoch for identity
+    authenticated requests or report the culprit and halt.
+  \item
     Verify \(\sigma _i\) by checking that the output of
-    \(\mathtt{Ver}(vk_i, A \Vert m, \sigma _i)\) is valid or report the
-    culprit and halt.
+    \(\mathtt{Ver}(vk_i, A \Vert \Delta \Vert m, \sigma _i)\) is valid
+    or report the culprit and halt.
   \end{itemize}
 \end{enumerate}
 
+\hypertarget{key-refresh}{%
+\subsubsection{4.3. Key Refresh}\label{key-refresh}}
+
+Follow the key refresh protocol described in section 3.2 and figure 6 of
+CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} to generate new ECDSA
+secret shares with the following modifications:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  At the end of Round 1, broadcast 2 additional parameters for each
+  \(P_i\) associated with the decentralized identity \(I_i\) with
+  verifying key \(vk_i\) and secret key \(sk_i\) as follows:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    The decentralized identity verifying key \(vk_i\).
+  \item
+    The current UTC timestamp \(\Delta\).
+  \item
+    The signature
+    \(\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert V_i)\).
+  \end{itemize}
+\item
+  At the beginning of Round 2, for each \(P_i\), verify \(\sigma _j\)
+  from all \(P_j\) where \(j \neq i\) as follows:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Verify that \(vk_i \in \mathcal{S}\) or report the culprit and halt.
+  \item
+    Verify \(\sigma _i\) by checking that the output of
+    \(\mathtt{Ver}(vk_j, A \Vert \Delta \Vert V_j, \sigma _j)\) is valid
+    or report the culprit and halt.
+  \end{itemize}
+\item
+  After the Output phase, follow the share splitting protocol in
+  \protect\hyperlink{share-splitting}{section 3.1} to split the new
+  secret share \(x_i^\ast\) into a new signing share \(k_i^\ast\) and a
+  new sub-share \(\beta _i^\ast\) for each party \(P_i\).
+\item
+  Modify Stored State for each \(P_i\) as follows:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Don't store \(x_i^\ast\).
+  \item
+    Replace \(k_i\) with \(k_i^\ast\) and \(\beta _i\) with
+    \(\beta _i^\ast\).
+  \end{itemize}
+\end{enumerate}
+
+\hypertarget{identity-auth-and-quorum-approval}{%
+\subsection{5. Identity Authentication and Quorum
+Approval}\label{identity-auth-and-quorum-approval}}
+
 \hypertarget{identity-authed-request}{%
-\subsection{7. Identity Authenticated Request Initiation and
-Verification}\label{identity-authed-request}}
+\subsubsection{5.1. Identity Authenticated
+Request}\label{identity-authed-request}}
 
 Decentralized identity authenticated requests allow parties to perform
 or request actions based on their associated decentralized identity.
 
 \hypertarget{identity-authed-request-initiation}{%
-\subsubsection{7.1. Identity Authenticated Request
+\paragraph{5.1.1. Identity Authenticated Request
 Initiation}\label{identity-authed-request-initiation}}
 
 To initiate an identity authenticated request with a command \(C\) from
@@ -456,7 +528,7 @@ verifying key \(vk_i\) and secret key \(sk_i\):
 \end{enumerate}
 
 \hypertarget{identity-authed-request-verification}{%
-\subsubsection{7.2. Identity Authenticated Request
+\paragraph{5.1.2. Identity Authenticated Request
 Verification}\label{identity-authed-request-verification}}
 
 To verify an identity authenticated request with a command \(C\) from a
@@ -480,13 +552,13 @@ as input:
 \end{enumerate}
 
 \hypertarget{identity-challenge}{%
-\subsection{8. Identity Challenge}\label{identity-challenge}}
+\subsubsection{5.2. Identity Challenge}\label{identity-challenge}}
 
 Identity challenges are used to verify that a party controls a
 decentralized identity.
 
 \hypertarget{identity-challenge-initiation}{%
-\paragraph{8.1. Identity Challenge
+\paragraph{5.2.1. Identity Challenge
 Initiation}\label{identity-challenge-initiation}}
 
 To issue an identity challenge to a party \(P_i\) from all verifying
@@ -496,7 +568,7 @@ Broadcast \(v_j\), \(C\) and \(\Delta\) to all parties, such that all
 parties can compute \(v = \Vert _{j \neq i} \: v_j\).
 
 \hypertarget{identity-challenge-response}{%
-\paragraph{8.2. Identity Challenge
+\paragraph{5.2.2. Identity Challenge
 Response}\label{identity-challenge-response}}
 
 For a party \(P_i\) with associated decentralized identity secret key
@@ -518,7 +590,7 @@ initiated at timestamp \(\Delta\), given \(v_j\) from all parties
 \end{enumerate}
 
 \hypertarget{identity-challenge-verification}{%
-\paragraph{8.3. Identity Challenge Response
+\paragraph{5.2.3. Identity Challenge Response
 Verification}\label{identity-challenge-verification}}
 
 To verify an identity challenge response from a party \(P_i\) for a
@@ -539,7 +611,7 @@ input:
 \end{enumerate}
 
 \hypertarget{identity-rotation}{%
-\subsection{9. Identity Rotation}\label{identity-rotation}}
+\subsubsection{5.3. Identity Rotation}\label{identity-rotation}}
 
 Identity rotation allows any party to change the decentralized identity
 associated with its secret share.
@@ -555,7 +627,7 @@ and secret key \(sk_i^ \ast\) proceeds as follows:
 \item
   For \(P_i\), initiate an ``identity-rotation'' request by following
   the protocol in
-  \protect\hyperlink{identity-authed-request-initiation}{section 7.1}.
+  \protect\hyperlink{identity-authed-request-initiation}{section 5.1.1}.
 \item
   For all \(P_j\) where \(j \neq i\):
 
@@ -564,15 +636,15 @@ and secret key \(sk_i^ \ast\) proceeds as follows:
   \item
     Verify the ``identity-rotation'' request by following the protocol
     in \protect\hyperlink{identity-authed-request-verification}{section
-    7.2}.
+    5.1.2}.
   \item
     Initiate an identity challenge for \(P_i\) by following the protocol
-    in \protect\hyperlink{identity-challenge-initiation}{section 8.1}.
+    in \protect\hyperlink{identity-challenge-initiation}{section 5.2.1}.
   \end{itemize}
 \item
   For \(P_i\), respond to the identity challenge by following the
   protocol in \protect\hyperlink{identity-challenge-response}{section
-  8.2} with the following augmentations:
+  5.2.2} with the following augmentations:
 
   \begin{itemize}
   \tightlist
@@ -591,7 +663,7 @@ and secret key \(sk_i^ \ast\) proceeds as follows:
   \item
     Verify the identity challenge response from \(P_i\) by following the
     protocol in
-    \protect\hyperlink{identity-challenge-verification}{section 8.3}.
+    \protect\hyperlink{identity-challenge-verification}{section 5.2.3}.
   \item
     Verify that \(P_i\) controls the new decentralized identity
     verifying key \(vk_i^ \ast\) as follows:
@@ -660,8 +732,8 @@ and secret key \(sk_i^ \ast\) proceeds as follows:
 \end{enumerate}
 
 \hypertarget{quorum-approved-request}{%
-\subsection{10. Quorum Approved Request Initiation and
-Verification}\label{quorum-approved-request}}
+\subsubsection{5.4. Quorum Approved
+Request}\label{quorum-approved-request}}
 
 Quorum approved requests allow any verified party to initiate actions
 that require explicit approval from a quorum of verified parties before
@@ -677,7 +749,7 @@ associated with decentralized identity \(I_i\) with verifying key
 \item
   For \(P_i\), initiate an identity authenticated request by following
   the protocol in
-  \protect\hyperlink{identity-authed-request-initiation}{section 7.1}.
+  \protect\hyperlink{identity-authed-request-initiation}{section 5.1.1}.
 \item
   For all \(P_j\) where \(j \neq i\) that approve the requested action:
 
@@ -686,10 +758,10 @@ associated with decentralized identity \(I_i\) with verifying key
   \item
     Verify the identity authenticated request by following the protocol
     in \protect\hyperlink{identity-authed-request-verification}{section
-    7.2}.
+    5.1.2}.
   \item
     Initiate an identity challenge for \(P_i\) by following the protocol
-    in \protect\hyperlink{identity-challenge-initiation}{section 8.1}
+    in \protect\hyperlink{identity-challenge-initiation}{section 5.2.1}
     with the following augmentations:
 
     \begin{itemize}
@@ -706,8 +778,8 @@ associated with decentralized identity \(I_i\) with verifying key
   quorum \(\mathcal{S} _c\) such that
   \(\mathcal{S} _c \subseteq \mathcal{S} \land |\mathcal{S} _c| \geq t - 1\),
   respond to the identity challenge by following the protocol in
-  \protect\hyperlink{identity-challenge-response}{section 8.2} with the
-  following modifications:
+  \protect\hyperlink{identity-challenge-response}{section 5.2.2} with
+  the following modifications:
 
   \begin{itemize}
   \tightlist
@@ -734,7 +806,7 @@ associated with decentralized identity \(I_i\) with verifying key
   \item
     Verify the augmented identity challenge response from \(P_i\) by
     following the protocol in
-    \protect\hyperlink{identity-challenge-verification}{section 8.3}
+    \protect\hyperlink{identity-challenge-verification}{section 5.2.3}
     with the following modifications:
 
     \begin{itemize}
@@ -765,16 +837,68 @@ associated with decentralized identity \(I_i\) with verifying key
   \end{itemize}
 \end{enumerate}
 
-\hypertarget{share-addition-and-removal}{%
-\subsection{11. Share Addition and
-Removal}\label{share-addition-and-removal}}
+\hypertarget{access-structure-modification}{%
+\subsection{6. Access structure
+modification}\label{access-structure-modification}}
 
-Share addition and removal allows a quorum of verified parties to either
-issue a secret share to a new party and its associated decentralized
-identity, or revoke the secret share of any party respectively.
+Access structure modification allows a quorum of verified parties to
+perform any of the following actions:
+
+\begin{itemize}
+\tightlist
+\item
+  share addition - issue a secret share to a new party and its
+  associated decentralized identity
+\item
+  share removal - revoke the secret share of any party.
+\item
+  threshold modification - change the threshold (i.e.~change the size of
+  the quorum).
+\end{itemize}
+
+As noted in \protect\hyperlink{augmentations}{section 4}, most threshold
+signature schemes don't define a key refresh protocol, and this is also
+the case for access structure modification protocols. However, it is
+similarly relatively straightforward to derive a suitable access
+structure modification protocol from a standard share redistribution
+scheme like DJ97 {[}\protect\hyperlink{ref-dj97}{8}{]} or WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]}.
+
+In fact, for applications that require support for access structure
+modification, it is preferable to replace a key refresh protocol based
+on (or similar to) a proactive secret sharing scheme like HJKY95
+{[}\protect\hyperlink{ref-hjky95}{7}{]} (as is the case for CGGMP20
+{[}\protect\hyperlink{ref-cggmp20}{1}{]} key refresh) with a protocol
+based on (or similar to) a share redistribution scheme like DJ97
+{[}\protect\hyperlink{ref-dj97}{8}{]} or WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]} as the latter are more flexible
+and allow for both proactive security and access structure changes.
+
+\textbf{NOTE:} For threshold signature schemes with identifiable aborts
+(e.g.~CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]}, GG20
+{[}\protect\hyperlink{ref-gg20}{2}{]} and FROST20
+{[}\protect\hyperlink{ref-frost20}{4}{]}), key refresh protocols should
+be derived from verifiable share redistribution schemes like WW01
+{[}\protect\hyperlink{ref-ww01}{9}{]} to preserve the same security
+model.
+
+Therefore, access structure modification can be achieved by following
+the augmented key refresh protocol described in
+\protect\hyperlink{key-refresh}{section 4.3} of this document, with some
+modifications based on a verifiable share redistribution scheme like
+WW01 {[}\protect\hyperlink{ref-ww01}{9}{]} (or similar) as described
+above. In particular, this entails each party (from a suitable subset of
+parties) performing a \(t ^\prime\)-out-of-\(n ^\prime\) (where
+\(t ^\prime\) and \(n ^\prime\) denote the new threshold and new number
+of parties respectively) Feldman's verifiable secret sharing
+{[}\protect\hyperlink{ref-feldman-vss}{11}{]} (with some modifications
+as described in section 4 of WW01 {[}\protect\hyperlink{ref-ww01}{9}{]})
+of its current secret share (i.e.~the output from either key generation
+or the most recent key refresh) with other parties (in the suitable
+subset).
 
 \hypertarget{share-addition}{%
-\subsubsection{11.1. Share Addition}\label{share-addition}}
+\subsubsection{6.1. Share Addition}\label{share-addition}}
 
 Share addition for a new party \(P_i\) with associated decentralized
 identity \(I_i\) proceeds as follows:
@@ -784,15 +908,17 @@ identity \(I_i\) proceeds as follows:
 \tightlist
 \item
   Initiate a quorum approved ``share-addition'' request by following the
-  protocol in \protect\hyperlink{quorum-approved-request}{section 10}.
+  protocol in \protect\hyperlink{quorum-approved-request}{section 5.4}.
 \item
-  Follow the key refresh protocol described in
-  \protect\hyperlink{key-refresh}{section 5} with \(P_i\) included as a
-  participant if the quorum approved request above succeeds.
+  Follow the augmented key refresh protocol described in
+  \protect\hyperlink{key-refresh}{section 4.3}, with verifiable share
+  redistribution modifications as described above and with \(P_i\)
+  included as a participant, if the quorum approved request above
+  succeeds.
 \end{enumerate}
 
 \hypertarget{share-removal}{%
-\subsubsection{11.2. Share Removal}\label{share-removal}}
+\subsubsection{6.2. Share Removal}\label{share-removal}}
 
 Share removal for a party \(P_i\) with associated decentralized identity
 \(I_i\) proceeds as follows:
@@ -802,53 +928,19 @@ Share removal for a party \(P_i\) with associated decentralized identity
 \tightlist
 \item
   Initiate a quorum approved ``share-removal'' request by following the
-  protocol in \protect\hyperlink{quorum-approved-request}{section 10}.
+  protocol in \protect\hyperlink{quorum-approved-request}{section 5.4}.
 \item
-  Follow the key refresh protocol described in
-  \protect\hyperlink{key-refresh}{section 5} without \(P_i\) if the
-  quorum approved request above succeeds.
+  Follow the augmented key refresh protocol described in
+  \protect\hyperlink{key-refresh}{section 4.3}, with verifiable share
+  redistribution modifications as described above and without \(P_i\),
+  if the quorum approved request above succeeds.
 \end{enumerate}
 
 \hypertarget{threshold-modification}{%
-\subsection{12. Threshold Modification}\label{threshold-modification}}
+\subsubsection{6.3. Threshold
+Modification}\label{threshold-modification}}
 
-Threshold modification allows a quorum of verified parties to change the
-threshold (i.e.~change the size of the quorum).
-
-While threshold modification (or more generally \(t\)-out-of-\(n\)
-sharing, and specifically the case where \(t < n\)) is not formally
-specified in CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]}, it can be
-derived in a relatively straightforward manner based on GG18
-{[}\protect\hyperlink{ref-gg18}{6}{]} (and GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]}) which CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]} builds upon (see sections
-1.2.8, 1.2.1 and 1.2.2 of CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]}). In general, CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]} can be seen as a combination of
-CMP20 {[}\protect\hyperlink{ref-cmp20}{3}{]} and GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]}, and a direct improvement on GG18
-{[}\protect\hyperlink{ref-gg18}{6}{]}.
-
-Therefore, threshold modification can be achieved by following the key
-refresh protocol described in section 3.2 and figure 6 of CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]} and
-\protect\hyperlink{key-refresh}{section 5} of this document, with some
-modifications based on the key generation protocols described in GG18
-{[}\protect\hyperlink{ref-gg18}{6}{]} and GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]}, and following the instructions in
-section 1.2.8 of CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]}.
-
-In particular, this entails performing a \(t\)-out-of-\(n\) Feldman's
-VSS {[}\protect\hyperlink{ref-feldman-vss}{7}{]} sharing of the values
-\(x_i^k\) (as defined in section 3.2 of CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]}), with the new threshold \(t\)
-used as the threshold parameter (similarly defined as \(t\)) for
-Feldman's VSS {[}\protect\hyperlink{ref-feldman-vss}{7}{]} protocol as
-described in section 2.8 and phase 2 of section 3.1 in GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]} (and similarly in section 2.6 and
-phase 2 of section 4.1 in GG18 {[}\protect\hyperlink{ref-gg18}{6}{]}).
-
-Threshold modification would then proceed as follows:
+Threshold modification proceeds as follows:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -856,25 +948,16 @@ Threshold modification would then proceed as follows:
 \item
   Initiate a quorum approved ``threshold-modification'' request by
   following the protocol in
-  \protect\hyperlink{quorum-approved-request}{section 10}.
+  \protect\hyperlink{quorum-approved-request}{section 5.4}.
 \item
-  Follow the key refresh protocol described in
-  \protect\hyperlink{key-refresh}{section 5} with the modifications
-  described above if the quorum approved request succeeds.
+  Follow the augmented key refresh protocol described in
+  \protect\hyperlink{key-refresh}{section 4.3}, with verifiable share
+  redistribution modifications as described above, if the quorum
+  approved request succeeds.
 \end{enumerate}
 
-\textbf{NOTE:} Similar modifications based on definitions from GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]} and GG18
-{[}\protect\hyperlink{ref-gg18}{6}{]} (and following the instructions in
-section 1.2.8 of CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]}) can
-be applied to the key generation, pre-signing and signing protocols of
-CGGMP20 {[}\protect\hyperlink{ref-cggmp20}{1}{]} (with augmentations as
-described in \protect\hyperlink{key-generation}{section 4} and
-\protect\hyperlink{signing}{section 6}) to achieve a \(t\)-out-of-\(n\)
-threshold-signature scheme for any \(t \leq n\).
-
 \hypertarget{share-recovery}{%
-\subsection{13. Share Recovery}\label{share-recovery}}
+\subsection{7. Share Recovery}\label{share-recovery}}
 
 Share recovery is only possible if the user's decentralized identity
 either survived or can be recovered after the disastrous event. In
@@ -891,7 +974,7 @@ either case, there are two options for share recovery depending on:
 \end{itemize}
 
 \hypertarget{share-recovery-quorum}{%
-\subsubsection{13.1. Share recovery with a surviving quorum of honest
+\subsubsection{7.1. Share recovery with a surviving quorum of honest
 parties}\label{share-recovery-quorum}}
 
 If a quorum of honest parties survives the disastrous event, share
@@ -908,7 +991,7 @@ proceeds as follows:
 \item
   For \(P_i\), Initiate a ``share-recovery'' request by following the
   protocol in
-  \protect\hyperlink{identity-authed-request-initiation}{section 7.1}.
+  \protect\hyperlink{identity-authed-request-initiation}{section 5.1.1}.
 \item
   For all \(P_j\) where \(j \neq i\):
 
@@ -917,31 +1000,31 @@ proceeds as follows:
   \item
     Verify the ``share-recovery'' request by following the protocol in
     \protect\hyperlink{identity-authed-request-verification}{section
-    7.2}.
+    5.1.2}.
   \item
     Initiate an identity challenge for \(P_i\) by following the protocol
-    in \protect\hyperlink{identity-challenge-initiation}{section 8.1}.
+    in \protect\hyperlink{identity-challenge-initiation}{section 5.2.1}.
   \end{itemize}
 \item
   For \(P_i\), respond to the identity challenge by following the
   protocol in \protect\hyperlink{identity-challenge-response}{section
-  8.2}.
+  5.2.2}.
 \item
   For all \(P_j\) where \(j \neq i\), verify the identity challenge
   response from \(P_i\) by following the protocol in
-  \protect\hyperlink{identity-challenge-verification}{section 8.3}.
+  \protect\hyperlink{identity-challenge-verification}{section 5.2.3}.
 \item
   Follow the key refresh protocol described in
-  \protect\hyperlink{key-refresh}{section 5} if all verifications above
-  pass.
+  \protect\hyperlink{key-refresh}{section 4.3} if all verifications
+  above pass.
 \end{enumerate}
 
 \hypertarget{share-recovery-backup}{%
-\subsubsection{13.2. Share recovery with a backup on user-controlled
-secondary or device-independent storage}\label{share-recovery-backup}}
+\subsubsection{7.2. Share recovery with a
+backup}\label{share-recovery-backup}}
 
 \hypertarget{share-recovery-backup-overview}{%
-\paragraph{13.2.1. Overview of share recovery with a
+\paragraph{7.2.1. Overview of share recovery with a
 backup}\label{share-recovery-backup-overview}}
 
 From the share splitting and reconstruction protocol in
@@ -965,7 +1048,7 @@ Dropbox \footnote{Dropbox. \url{https://www.dropbox.com}.} e.t.c)
 without exposing the secret share \(x\).
 
 \hypertarget{share-recovery-backup-encrypt}{%
-\paragraph{13.2.2. Generating an encrypted backup for share
+\paragraph{7.2.2. Generating an encrypted backup for share
 recovery}\label{share-recovery-backup-encrypt}}
 
 For increased security, a signature of a standardized phrase can be used
@@ -997,7 +1080,7 @@ proceeds as follows:
 \end{enumerate}
 
 \hypertarget{share-recovery-backup-decrypt}{%
-\paragraph{13.2.3. Decrypting an encrypted
+\paragraph{7.2.3. Decrypting an encrypted
 backup}\label{share-recovery-backup-decrypt}}
 
 Share recovery would then start by signing this standardized phrase,
@@ -1029,7 +1112,7 @@ sub-share \(\beta _c\), this proceeds as follows:
 \end{enumerate}
 
 \hypertarget{share-recovery-backup-enhancements}{%
-\paragraph{13.2.4. Further security and usability considerations for
+\paragraph{7.2.4. Further security and usability considerations for
 share recovery with a backup}\label{share-recovery-backup-enhancements}}
 
 For further improved security and usability, the signing share \(k\) can
@@ -1053,14 +1136,14 @@ but instead relying on the user to provide this input during recovery as
 a security-usability tradeoff.
 
 \hypertarget{acknowledgements}{%
-\subsection{14. Acknowledgements}\label{acknowledgements}}
+\subsection{Acknowledgements}\label{acknowledgements}}
 
 This work is funded by a grant from the Ethereum Foundation \footnote{Ethereum
   Foundation: Ecosystem Support Program.
   \url{https://esp.ethereum.foundation}.}.
 
 \hypertarget{references}{%
-\subsection{15. References}\label{references}}
+\subsection{References}\label{references}}
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{0}{0}
@@ -1084,28 +1167,56 @@ ECDSA with identifiable abort. Cryptology ePrint Archive, Paper
 non-interactive, proactive, threshold ECDSA. Cryptology ePrint Archive,
 Paper 2020/492. \url{https://eprint.iacr.org/2020/492}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
+\leavevmode\vadjust pre{\hypertarget{ref-frost20}{}}%
 \CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{Komlo, C. and Goldberg, I. 2020. FROST: Flexible
+round-optimized schnorr threshold signatures. Cryptology ePrint Archive,
+Paper 2020/852. \url{https://eprint.iacr.org/2020/852}.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
+\CSLLeftMargin{{[}5{]} }%
 \CSLRightInline{Shamir, A. 1979. How to share a secret. \emph{Commun.
 ACM}. 22, 11 (Nov. 1979), 612--613.
 DOI:https://doi.org/\href{https://doi.org/10.1145/359168.359176}{10.1145/359168.359176}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-wiki:interpolation}{}}%
-\CSLLeftMargin{{[}5{]} }%
+\CSLLeftMargin{{[}6{]} }%
 \CSLRightInline{Wikipedia. Polynomial interpolation:
 \href{https://en.wikipedia.org/wiki/Polynomial_interpolation}{\emph{https://en.wikipedia.org/wiki/Polynomial\_interpolation}}.
 Accessed: 2023-05-12.}
 
+\leavevmode\vadjust pre{\hypertarget{ref-hjky95}{}}%
+\CSLLeftMargin{{[}7{]} }%
+\CSLRightInline{Herzberg, A., Jarecki, S., Krawczyk, H. and Yung, M.
+1995. Proactive secret sharing or: How to cope with perpetual leakage.
+\emph{Advances in cryptology --- CRYPT0' 95} (Berlin, Heidelberg, 1995),
+339--352. \url{https://doi.org/10.1007/3-540-44750-4_27}.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-dj97}{}}%
+\CSLLeftMargin{{[}8{]} }%
+\CSLRightInline{Desmedt, Y. and jodi, S.J. 1997. \emph{Redistributing
+secret shares to new access structures and its applications}. Technical
+Report \#ISSE-TR-97-01. George Mason University, Fairfax, VA 22030,
+Department of Computer Science.
+\url{https://citeseerx.ist.psu.edu/document?repid=rep1\&type=pdf\&doi=af623000d63f4c0251936b35c057a4d46581b4de}.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-ww01}{}}%
+\CSLLeftMargin{{[}9{]} }%
+\CSLRightInline{Wong, T.M. and Wing, J.M. 2001. \emph{Verifiable secret
+redistribution}. Technical Report \#ADA458508. Carnegie Mellon
+University, Pittsburgh, PA 15213, School of Computer Science.
+\url{https://apps.dtic.mil/sti/tr/pdf/ADA458508.pdf}.}
+
 \leavevmode\vadjust pre{\hypertarget{ref-gg18}{}}%
-\CSLLeftMargin{{[}6{]} }%
+\CSLLeftMargin{{[}10{]} }%
 \CSLRightInline{Gennaro, R. and Goldfeder, S. 2018. Fast multiparty
 threshold ECDSA with fast trustless setup. \emph{Proceedings of the 2018
 ACM SIGSAC conference on computer and communications security} (New
 York, NY, USA, 2018), 1179--1194.
-\url{https://doi.org/10.1145/3243734.3243859}.}
+\url{https://eprint.iacr.org/2019/114.pdf}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-feldman-vss}{}}%
-\CSLLeftMargin{{[}7{]} }%
+\CSLLeftMargin{{[}11{]} }%
 \CSLRightInline{Feldman, P. 1987. A practical scheme for non-interactive
 verifiable secret sharing. \emph{Proceedings of the 28th annual
 symposium on foundations of computer science} (USA, 1987), 427--438.

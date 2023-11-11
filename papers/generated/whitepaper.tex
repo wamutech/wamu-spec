@@ -79,7 +79,7 @@ Multiple Decentralized Identities}
 \author{David Semakula\\
 hello@davidsemakula.com\\
 https://davidsemakula.com}
-\date{10th October, 2023 \textbar{} version 1.4}
+\date{13th November, 2023 \textbar{} version 1.5}
 
 \begin{document}
 \maketitle
@@ -158,8 +158,9 @@ users.
 Recent breakthroughs in threshold signing research have yielded
 non-interactive threshold signature schemes (e.g.~CGGMP20
 {[}\protect\hyperlink{ref-cggmp20}{1}{]}, GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]} and CMP20
-{[}\protect\hyperlink{ref-cmp20}{3}{]}) that allow for asynchronous
+{[}\protect\hyperlink{ref-gg20}{2}{]}, CMP20
+{[}\protect\hyperlink{ref-cmp20}{3}{]} and FROST20
+{[}\protect\hyperlink{ref-frost20}{4}{]}) that allow for asynchronous
 communication between signing parties, making the use of mainstream
 consumer devices as signing parties viable.
 
@@ -184,8 +185,9 @@ achieved by:
   generation and signing protocols (and optionally to the key refresh
   protocol) of the threshold signature scheme.
 \item
-  Defining protocols for identity rotation, share addition and removal,
-  threshold modification and share recovery (as described in
+  Defining protocols for identity rotation, access structure
+  modification (i.e.~share addition and removal and threshold
+  modification) and share recovery (as described in
   \protect\hyperlink{share-recovery}{section 4}) that build on top of
   the above 2 augmentations.
 \end{itemize}
@@ -223,7 +225,7 @@ described in technical detail in this document, for simplicity, the
 share recovery protocol is only described at a high-level and no
 technical detail is provided for decentralized identity authentication
 and the rest of Wamu's sub-protocols. We refer the reader to Wamu's
-technical specification {[}\protect\hyperlink{ref-wamu}{4}{]} for the
+technical specification {[}\protect\hyperlink{ref-wamu}{5}{]} for the
 technical details that are not provided in this document.
 
 \hypertarget{share-splitting-and-reconstruction}{%
@@ -243,7 +245,7 @@ message as the ``signing share'') and computing a ``sub-share''
 \(k\) needs to be signed by \(I\) using \(\mathtt{Sig}\) to produce
 another ``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are
 shares of \(x\) under Shamir's secret-sharing scheme
-{[}\protect\hyperlink{ref-sss79}{5}{]}.
+{[}\protect\hyperlink{ref-sss79}{6}{]}.
 
 \textbf{NOTE:} Share splitting and reconstruction is a single-party
 localized concern that happens after (and is not related to) the
@@ -271,7 +273,7 @@ proceeds as follows:
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
   (i.e.~Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]})
+  {[}\protect\hyperlink{ref-wiki:interpolation}{7}{]})
 \item
   Compute another point \(\beta\) from \(L\) such that
   \(\beta \neq \alpha\), \(\beta\) becomes the second sub-share of
@@ -301,7 +303,7 @@ reconstruction protocol proceeds as follows:
   \(\alpha = (r, s) \pmod q\).
 \item
   Generate a line \(L\) by performing Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{6}{]} using \(\alpha\)
+  {[}\protect\hyperlink{ref-wiki:interpolation}{7}{]} using \(\alpha\)
   and \(\beta\) as inputs.
 \item
   Compute \(x\) as the constant term of \(L\).
@@ -311,7 +313,7 @@ reconstruction protocol proceeds as follows:
   Return \(x\) as the secret share.
 \end{enumerate}
 
-\textbf{NOTE:} For ECDSA signatures, the parameters \(r\) and \(s\) in
+\textbf{NOTE:} The signature parameters \(r\) and \(s\) in
 \((r, s) \leftarrow \mathtt{Sig}(sk, k)\) are already computed modulo
 \(q\). We use the notation \(\alpha = (r, s) \pmod q\) for the sub-share
 to make it clear (at a glance) that the sub-shares are computed using
@@ -351,8 +353,8 @@ protocol of the threshold signature scheme with \(P_i\) participating if
 signatory.
 
 \hypertarget{share-recovery-backup}{%
-\subsubsection{4.2. Share recovery with a backup on user-controlled
-secondary or device-independent storage}\label{share-recovery-backup}}
+\subsubsection{4.2. Share recovery with a
+backup}\label{share-recovery-backup}}
 
 \hypertarget{share-recovery-backup-overview}{%
 \paragraph{4.2.1. Overview of share recovery with a
@@ -416,7 +418,7 @@ but instead relying on the user to provide this input during recovery as
 a security-usability tradeoff.
 
 \hypertarget{conclusion}{%
-\subsection{5. Conclusion}\label{conclusion}}
+\subsection{Conclusion}\label{conclusion}}
 
 The Wamu project (meaning ``together'') aims to unlock the benefits of
 threshold signatures for decentralized teams and organizations, and
@@ -437,14 +439,14 @@ access structures by:
 \end{itemize}
 
 \hypertarget{acknowledgements}{%
-\subsection{6. Acknowledgements}\label{acknowledgements}}
+\subsection{Acknowledgements}\label{acknowledgements}}
 
 This work is funded by a grant from the Ethereum Foundation \footnote{Ethereum
   Foundation: Ecosystem Support Program.
   \url{https://esp.ethereum.foundation}.}.
 
 \hypertarget{references}{%
-\subsection{7. References}\label{references}}
+\subsection{References}\label{references}}
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{0}{0}
@@ -468,21 +470,27 @@ ECDSA with identifiable abort. Cryptology ePrint Archive, Paper
 non-interactive, proactive, threshold ECDSA. Cryptology ePrint Archive,
 Paper 2020/492. \url{https://eprint.iacr.org/2020/492}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-wamu}{}}%
+\leavevmode\vadjust pre{\hypertarget{ref-frost20}{}}%
 \CSLLeftMargin{{[}4{]} }%
+\CSLRightInline{Komlo, C. and Goldberg, I. 2020. FROST: Flexible
+round-optimized schnorr threshold signatures. Cryptology ePrint Archive,
+Paper 2020/852. \url{https://eprint.iacr.org/2020/852}.}
+
+\leavevmode\vadjust pre{\hypertarget{ref-wamu}{}}%
+\CSLLeftMargin{{[}5{]} }%
 \CSLRightInline{Wamu: A protocol for computation of threshold signatures
 by multiple decentralized identities:
 \href{https://wamu.tech/specification}{\emph{https://wamu.tech/specification}}.
 Accessed: 2023-05-15.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
-\CSLLeftMargin{{[}5{]} }%
+\CSLLeftMargin{{[}6{]} }%
 \CSLRightInline{Shamir, A. 1979. How to share a secret. \emph{Commun.
 ACM}. 22, 11 (Nov. 1979), 612--613.
 DOI:https://doi.org/\href{https://doi.org/10.1145/359168.359176}{10.1145/359168.359176}.}
 
 \leavevmode\vadjust pre{\hypertarget{ref-wiki:interpolation}{}}%
-\CSLLeftMargin{{[}6{]} }%
+\CSLLeftMargin{{[}7{]} }%
 \CSLRightInline{Wikipedia. Polynomial interpolation:
 \href{https://en.wikipedia.org/wiki/Polynomial_interpolation}{\emph{https://en.wikipedia.org/wiki/Polynomial\_interpolation}}.
 Accessed: 2023-05-12.}

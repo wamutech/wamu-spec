@@ -35,6 +35,15 @@
     url = {https://eprint.iacr.org/2020/540}
 }
 
+@misc{frost20,
+  author = {Chelsea Komlo and Ian Goldberg},
+  title = {FROST: Flexible Round-Optimized Schnorr Threshold Signatures},
+  howpublished = {Cryptology ePrint Archive, Paper 2020/852},
+  year = {2020},
+  note = {\url{https://eprint.iacr.org/2020/852}},
+  url = {https://eprint.iacr.org/2020/852}
+}
+
 @inproceedings{gg18,
   author = {Gennaro, Rosario and Goldfeder, Steven},
   title = {Fast Multiparty Threshold ECDSA with Fast Trustless Setup},
@@ -42,7 +51,7 @@
   isbn = {9781450356930},
   publisher = {Association for Computing Machinery},
   address = {New York, NY, USA},
-  url = {https://doi.org/10.1145/3243734.3243859},
+  url = {https://eprint.iacr.org/2019/114.pdf},
   doi = {10.1145/3243734.3243859},
   abstract = {A threshold signature scheme enables distributed signing among n players such that any subgroup of size $t+1$ can sign, whereas any group with t or fewer players cannot. While there exist previous threshold schemes for the ECDSA signature scheme, we are the first protocol that supports multiparty signatures for any $t \l{}eq n$ with an efficient dealerless key generation. Our protocol is faster than previous solutions and significantly reduces the communication complexity as well. We prove our scheme secure against malicious adversaries with a dishonest majority. We implemented our protocol, demonstrating its efficiency and suitability to be deployed in practice.},
   booktitle = {Proceedings of the 2018 ACM SIGSAC Conference on Computer and Communications Security},
@@ -51,6 +60,43 @@
   keywords = {threshold signatures, multiparty computation, bitcoin, digital signatures, cryptpgraphy},
   location = {Toronto, Canada},
   series = {CCS '18}
+}
+
+@report{ww01,
+  author = {Wong, Theodore M. and Wing, Jeannette M.},
+  title = {Verifiable Secret Redistribution},
+  type = {report},
+  institution = {Carnegie Mellon University, Pittsburgh, PA 15213, School of Computer Science},
+  date = {2001-10-01},
+  abstract = {The authors present a new protocol to perform non-interactive verifiable secret redistribution VSR for secrets distributed with Shamirs secret sharing scheme. They base their VSR protocol on Desmedt and Jajodias redistribution protocol for linear secret-sharing schemes, which they specialize for Shamirs scheme. They extend their redistribution protocol with Feldmans non-interactive verifiable secret sharing scheme to ensure that a SUBSHARES-VALID condition is true after redistribution. They show that the SUBSHARES-VALID condition is necessary but not sufficient to guarantee that the new shareholders have valid shares, so they present an additional SHARES-VALID condition.},
+  url = {https://apps.dtic.mil/sti/tr/pdf/ADA458508.pdf},
+  number = {ADA458508},
+}
+
+@report{dj97,
+  author = {Yvo Desmedt and Sushil Ja jodi},
+  title = {Redistributing Secret Shares to New Access Structures and Its Applications},
+  type = {report},
+  institution = {George Mason University, Fairfax, VA 22030, Department of Computer Science},
+  date = {1997},
+  abstract = {Proactive secret sharing deals with refreshing secret shares, i.e., redistributing the shares of a secret to the original access structure. In this paper we focus on the general problem of redistributing shares of a secret key. Shares of a secret have been distributed such that access sets specified in the access structure (e.g., t-out-of-l) can access (or use) the secret. The problem is how to redistribute the secret, without recovering it, in such a way that those specified in the new access structure will be able to recover the secret. We also adapt our scheme such that it can be used in the context of threshold cryptography and discuss its applications to secure databases.},
+  url = {https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=af623000d63f4c0251936b35c057a4d46581b4de},
+  number = {ISSE-TR-97-01},
+}
+
+@inproceedings{hjky95,
+  author = {Herzberg, Amir and Jarecki, Stanis{\l}aw and Krawczyk, Hugo and Yung, Moti},
+  editor = {Coppersmith, Don},
+  title = {Proactive Secret Sharing Or: How to Cope With Perpetual Leakage},
+  year = {1995},
+  isbn = {978-3-540-44750-4},
+  publisher = {Springer Berlin Heidelberg},
+  address = {Berlin, Heidelberg},
+  url = {https://doi.org/10.1007/3-540-44750-4_27},
+  doi = {10.1007/3-540-44750-4_27},
+  abstract = {Secret sharing schemes protect secrets by distributing them over different locations (share holders). In particular, in k out of n threshold schemes, security is assured if throughout the entire life-time of the secret the adversary is restricted to compromise less than k of the n locations. For long-lived and sensitive secrets this protection may be insufficient.},
+  booktitle = {Advances in Cryptology --- CRYPT0' 95},
+  pages = {339--352},
 }
 
 @inproceedings{feldman-vss,
