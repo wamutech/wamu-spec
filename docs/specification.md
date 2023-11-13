@@ -257,7 +257,7 @@ A quorum approved request with a command $C$ from a party $P_i$ associated with 
      - Verify that $\mathcal{S} _c \subseteq \mathcal{S} \land vk_i \notin \mathcal{S} _c$ or report the culprit and halt.
      - Verify that $\forall \, vk_j \in \mathcal{S} _c$ where $j \neq i$, the output of $\mathtt{Ver}(vk_j, A \Vert \Delta \Vert C \Vert v_j, \sigma _j)$ is valid or report the culprit and halt.
 
-## 6. Access structure modification {#access-structure-modification}
+## 6. Access Structure Modification {#access-structure-modification}
 
 Access structure modification allows a quorum of verified parties to perform any of the following actions:
 
