@@ -29,7 +29,10 @@ async function addDateAndReadingTime(ast, file) {
     const { readingTime } = await import('hast-util-reading-time');
     const date = matter?.date;
     const markup = `<div class="margin-vert--md">
-        ${[date ? `<time>${date}</time>` : '', `${Math.ceil(readingTime(ast, { age: 18 }))} min read`]
+        ${[
+          date ? `<time>${date.replaceAll('\\', '|')}</time>` : '',
+          `${Math.ceil(readingTime(ast, { age: 18 }))} min read`,
+        ]
           .filter(Boolean)
           .join(' · ')}
     </div>`;

@@ -1,10 +1,14 @@
 ---
 title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities"
+subtitle: Whitepaper
 author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 13th November, 2023 | version 1.5
+date: |
+  Published: 15th May, 2023 \
+  Last Updated: 13th November, 2023 \
+  Version: 1.5
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1

@@ -44,6 +44,10 @@
   padding-left: 1em;
 }
 
+.csl-right-inline a {
+  word-break: break-all;
+}
+
 /* Footer license and copyright links */
 .footer-license-info a {
   text-decoration: underline;

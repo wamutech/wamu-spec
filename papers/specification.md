@@ -5,7 +5,10 @@ author: |
   David Semakula \
   hello@davidsemakula.com \
   https://davidsemakula.com
-date: 13th November, 2023 | version 1.6
+date: |
+  Published: 15th May, 2023 \
+  Last Updated: 13th November, 2023 \
+  Version: 1.6
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
