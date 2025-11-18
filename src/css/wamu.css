@@ -15,7 +15,14 @@
   --ifm-color-primary-lighter: #818cf8; /* Indigo 400 */
   --ifm-color-primary-lightest: #a5b4fc; /* Indigo 300 */
   --ifm-code-font-size: 95%;
+  --ifm-button-color: var(--ifm-font-color-base-inverse);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --color-primary-ultra-darkest: var(--ifm-color-primary-darkest);
+  --banner-bg: var(--ifm-color-primary);
+  --banner-text-color: var(--ifm-font-color-base-inverse);
+  --button-primary: var(--ifm-color-primary);
+  --button-primary-dark: var(--ifm-color-primary-dark);
+  --button-primary-darker: var(--ifm-color-primary-darker);
 }
 
 /* For readability concerns, you should choose a lighter palette in dark mode. */
@@ -28,7 +35,14 @@
   --ifm-color-primary-light: #818cf8; /* Indigo 400 */
   --ifm-color-primary-lighter: #a5b4fc; /* Indigo 300 */
   --ifm-color-primary-lightest: #c7d2fe; /* Indigo 200 */
+  --ifm-button-color: var(--ifm-font-color-base);
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --color-primary-ultra-darkest: #312e81; /* Indigo 900 */
+  --banner-bg: var(--color-primary-ultra-darkest);
+  --banner-text-color: var(--ifm-font-color-base);
+  --button-primary: var(--ifm-color-primary-darkest);
+  --button-primary-dark: var(--color-primary-ultra-darkest);
+  --button-primary-darker: var(--color-primary-ultra-darkest);
 }
 
 /* Similar csl entry styles to pandoc */
