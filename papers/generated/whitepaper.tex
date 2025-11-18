@@ -1,10 +1,11 @@
 % Options for packages loaded elsewhere
 \PassOptionsToPackage{unicode}{hyperref}
 \PassOptionsToPackage{hyphens}{url}
-%
 \documentclass[
 ]{article}
+\usepackage{xcolor}
 \usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
 \usepackage{iftex}
 \ifPDFTeX
   \usepackage[T1]{fontenc}
@@ -35,47 +36,52 @@
 }{% if KOMA class
   \KOMAoptions{parskip=half}}
 \makeatother
-\usepackage{xcolor}
-\setlength{\emergencystretch}{3em} % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
-\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+% definitions for citeproc citations
+\NewDocumentCommand\citeproctext{}{}
+\NewDocumentCommand\citeproc{mm}{%
+  \begingroup\def\citeproctext{#2}\cite{#1}\endgroup}
+\makeatletter
+ % allow citations to break across lines
+ \let\@cite@ofmt\@firstofone
+ % avoid brackets around text for \cite:
+ \def\@biblabel#1{}
+ \def\@cite#1#2{{#1\if@tempswa , #2\fi}}
+\makeatother
 \newlength{\cslhangindent}
 \setlength{\cslhangindent}{1.5em}
 \newlength{\csllabelwidth}
 \setlength{\csllabelwidth}{3em}
-\newlength{\cslentryspacingunit} % times entry-spacing
-\setlength{\cslentryspacingunit}{\parskip}
-\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
- {% don't indent paragraphs
-  \setlength{\parindent}{0pt}
+\newenvironment{CSLReferences}[2] % #1 hanging-indent, #2 entry-spacing
+ {\begin{list}{}{%
+  \setlength{\itemindent}{0pt}
+  \setlength{\leftmargin}{0pt}
+  \setlength{\parsep}{0pt}
   % turn on hanging indent if param 1 is 1
   \ifodd #1
-  \let\oldpar\par
-  \def\par{\hangindent=\cslhangindent\oldpar}
+   \setlength{\leftmargin}{\cslhangindent}
+   \setlength{\itemindent}{-1\cslhangindent}
   \fi
   % set entry spacing
-  \setlength{\parskip}{#2\cslentryspacingunit}
- }%
- {}
+  \setlength{\itemsep}{#2\baselineskip}}}
+ {\end{list}}
 \usepackage{calc}
-\newcommand{\CSLBlock}[1]{#1\hfill\break}
-\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
-\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLBlock}[1]{\hfill\break\parbox[t]{\linewidth}{\strut\ignorespaces#1\strut}}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{\strut#1\strut}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{\strut#1\strut}}
 \newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
-\ifLuaTeX
-  \usepackage{selnolig}  % disable illegal ligatures
-\fi
-\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \urlstyle{same}
 \hypersetup{
-  pdftitle={Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities},
+  pdftitle={Wamu: A Protocol for Computation of Threshold Signatures by Multiple Cryptographic Identities},
   hidelinks,
   pdfcreator={LaTeX via pandoc}}
 
 \title{Wamu: A Protocol for Computation of Threshold Signatures by
-Multiple Decentralized Identities}
+Multiple Cryptographic Identities}
 \usepackage{etoolbox}
 \makeatletter
 \providecommand{\subtitle}[1]{% add subtitle to \maketitle
@@ -87,8 +93,8 @@ Multiple Decentralized Identities}
 hello@davidsemakula.com\\
 https://davidsemakula.com}
 \date{Published: 15th May, 2023\\
-Last Updated: 13th November, 2023\\
-Version: 1.5}
+Last Updated: 19th November, 2025\\
+Version: 1.5.1}
 
 \begin{document}
 \maketitle
@@ -97,14 +103,13 @@ Version: 1.5}
 \setcounter{tocdepth}{3}
 \tableofcontents
 }
-\hypertarget{introduction}{%
-\subsection{1. Introduction}\label{introduction}}
+\subsection{1. Introduction}\label{introduction}
 
 Multisig wallets (e.g.~Safe \footnote{Safe. \url{https://safe.global}})
 are already widely adopted \footnote{Dune Analytics. {[}Mainnet{]} Safe.
   \url{https://dune.com/safe/ethereum}} and have proven the importance
 of noncustodial shared wallets with threshold access structures
-controlled by multiple decentralized identities, for mainstream users
+controlled by multiple cryptographic identities, for mainstream users
 and decentralized teams and organizations.
 
 However, threshold signatures have some unique benefits over multisig
@@ -119,8 +124,7 @@ single signature that's similar to those computed by traditional
 single-party wallets (e.g.~Metamask \footnote{MetaMask.
   \url{https://metamask.io}}).
 
-\hypertarget{problem}{%
-\subsubsection{1.1. Problem}\label{problem}}
+\subsubsection{1.1. Problem}\label{problem}
 
 Despite the aforementioned benefits, there are currently no mainstream
 threshold signature wallet alternatives to multisig wallets for
@@ -155,21 +159,19 @@ wallets with threshold access structures because:
   \end{itemize}
 \end{itemize}
 
-\hypertarget{solution}{%
-\subsubsection{1.2. Solution}\label{solution}}
+\subsubsection{1.2. Solution}\label{solution}
 
 The ecosystem needs a new breed of noncustodial threshold signature
-wallet solutions that are controlled by multiple decentralized
+wallet solutions that are controlled by multiple cryptographic
 identities and can run on mainstream consumer devices making them well
 suited for use by decentralized teams and organizations, and mainstream
 users.
 
 Recent breakthroughs in threshold signing research have yielded
 non-interactive threshold signature schemes (e.g.~CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]}, GG20
-{[}\protect\hyperlink{ref-gg20}{2}{]}, CMP20
-{[}\protect\hyperlink{ref-cmp20}{3}{]} and FROST20
-{[}\protect\hyperlink{ref-frost20}{4}{]}) that allow for asynchronous
+{[}\citeproc{ref-cggmp20}{1}{]}, GG20 {[}\citeproc{ref-gg20}{2}{]},
+CMP20 {[}\citeproc{ref-cmp20}{3}{]} and FROST20
+{[}\citeproc{ref-frost20}{4}{]}) that allow for asynchronous
 communication between signing parties, making the use of mainstream
 consumer devices as signing parties viable.
 
@@ -177,38 +179,36 @@ To remove the need for centralized and/or trust-based identity systems,
 and provide a user experience similar to existing multisig wallets, Wamu
 introduces a unique approach of augmenting a state-of-the-art
 non-interactive threshold signature scheme (e.g.~CGGMP20
-{[}\protect\hyperlink{ref-cggmp20}{1}{]}) by cryptographically
-associating each signing party with a decentralized identity. This is
-achieved by:
+{[}\citeproc{ref-cggmp20}{1}{]}) by cryptographically associating each
+signing party with a cryptographic identity. This is achieved by:
 
 \begin{itemize}
 \tightlist
 \item
   Splitting the secret share for each party between the party and the
-  output of a signing operation by its associated decentralized
+  output of a signing operation by its associated cryptographic
   identity, thus making the signing operation a requirement for
   reconstructing the party's secret share as described in
-  \protect\hyperlink{share-splitting-and-reconstruction}{section 3}.
+  \hyperref[share-splitting-and-reconstruction]{section 3}.
 \item
-  Adding peer-to-peer decentralized identity authentication to the key
+  Adding peer-to-peer cryptographic identity authentication to the key
   generation and signing protocols (and optionally to the key refresh
   protocol) of the threshold signature scheme.
 \item
   Defining protocols for identity rotation, access structure
   modification (i.e.~share addition and removal and threshold
   modification) and share recovery (as described in
-  \protect\hyperlink{share-recovery}{section 4}) that build on top of
-  the above 2 augmentations.
+  \hyperref[share-recovery]{section 4}) that build on top of the above 2
+  augmentations.
 \end{itemize}
 
 \textbf{NOTE:} For interoperability with existing wallet solutions, the
-only requirement for decentralized identity providers is the ability to
+only requirement for cryptographic identity providers is the ability to
 compute cryptographic signatures for any arbitrary message in such a way
 that the output signature is 1) deterministic and 2) can be verified in
 a non-interactive manner.
 
-\hypertarget{preliminaries}{%
-\subsection{2. Preliminaries}\label{preliminaries}}
+\subsection{2. Preliminaries}\label{preliminaries}
 
 The rest of this document describes how Wamu's unique share splitting
 and reconstruction, and share recovery protocols work. For these
@@ -219,9 +219,9 @@ descriptions, we'll use the following notation:
 \item
   \(P\) denotes a party.
 \item
-  \(I\) denotes a decentralized identity.
+  \(I\) denotes a cryptographic identity.
 \item
-  \(sk\) denotes the secret key of a decentralized identity.
+  \(sk\) denotes the secret key of a cryptographic identity.
 \item
   \(\mathtt{Sig}\) denotes a signing algorithm.
 \item
@@ -232,17 +232,16 @@ descriptions, we'll use the following notation:
 \textbf{NOTE:} While the share splitting and reconstruction protocol is
 described in technical detail in this document, for simplicity, the
 share recovery protocol is only described at a high-level and no
-technical detail is provided for decentralized identity authentication
+technical detail is provided for cryptographic identity authentication
 and the rest of Wamu's sub-protocols. We refer the reader to Wamu's
-technical specification {[}\protect\hyperlink{ref-wamu}{5}{]} for the
-technical details that are not provided in this document.
+technical specification {[}\citeproc{ref-wamu}{5}{]} for the technical
+details that are not provided in this document.
 
-\hypertarget{share-splitting-and-reconstruction}{%
 \subsection{3. Share Splitting and
-Reconstruction}\label{share-splitting-and-reconstruction}}
+Reconstruction}\label{share-splitting-and-reconstruction}
 
 Assuming that we have a secret share \(x\) for a party \(P\) with an
-associated decentralized identity \(I\), the share splitting and
+associated cryptographic identity \(I\), the share splitting and
 reconstruction protocol describes how to split \(x\) between \(P\) and
 the output of a signing operation \(\mathtt{Sig}\) by \(I\) so that the
 output of \(\mathtt{Sig}\) is required to reconstruct the secret share
@@ -254,17 +253,16 @@ message as the ``signing share'') and computing a ``sub-share''
 \(k\) needs to be signed by \(I\) using \(\mathtt{Sig}\) to produce
 another ``sub-share'' \(\alpha\), such that \(\alpha\) and \(\beta\) are
 shares of \(x\) under Shamir's secret-sharing scheme
-{[}\protect\hyperlink{ref-sss79}{6}{]}.
+{[}\citeproc{ref-sss79}{6}{]}.
 
 \textbf{NOTE:} Share splitting and reconstruction is a single-party
 localized concern that happens after (and is not related to) the
 distributed key generation (DKG) protocol of the threshold signature
 scheme.
 
-\hypertarget{share-splitting}{%
-\subsubsection{3.1. Share splitting}\label{share-splitting}}
+\subsubsection{3.1. Share splitting}\label{share-splitting}
 
-Given a secret share \(x\) as input and access to the decentralized
+Given a secret share \(x\) as input and access to the cryptographic
 identity \(I\) with secret key \(sk\), the share splitting protocol
 proceeds as follows:
 
@@ -282,7 +280,7 @@ proceeds as follows:
   Generate a line \(L\) (i.e a polynomial of degree 1) such that
   \(\alpha\) is a point on the line and \(x\) is the constant term
   (i.e.~Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{7}{]})
+  {[}\citeproc{ref-wiki:interpolation}{7}{]})
 \item
   Compute another point \(\beta\) from \(L\) such that
   \(\beta \neq \alpha\), \(\beta\) becomes the second sub-share of
@@ -293,13 +291,12 @@ proceeds as follows:
   Return the signing share \(k\) and the sub-share \(\beta\).
 \end{enumerate}
 
-\hypertarget{share-reconstruction}{%
-\subsubsection{3.2. Share reconstruction}\label{share-reconstruction}}
+\subsubsection{3.2. Share reconstruction}\label{share-reconstruction}
 
 Given a signing share \(k\) and a sub-share \(\beta\) as input (i.e.~the
 outputs of the share splitting protocol in
-\protect\hyperlink{share-splitting}{section 3.1} above) and access to
-the decentralized identity \(I\) with secret key \(sk\), the share
+\hyperref[share-splitting]{section 3.1} above) and access to the
+cryptographic identity \(I\) with secret key \(sk\), the share
 reconstruction protocol proceeds as follows:
 
 \begin{enumerate}
@@ -312,8 +309,8 @@ reconstruction protocol proceeds as follows:
   \(\alpha = (r, s) \pmod q\).
 \item
   Generate a line \(L\) by performing Polynomial Interpolation
-  {[}\protect\hyperlink{ref-wiki:interpolation}{7}{]} using \(\alpha\)
-  and \(\beta\) as inputs.
+  {[}\citeproc{ref-wiki:interpolation}{7}{]} using \(\alpha\) and
+  \(\beta\) as inputs.
 \item
   Compute \(x\) as the constant term of \(L\).
 \item
@@ -328,10 +325,9 @@ reconstruction protocol proceeds as follows:
 to make it clear (at a glance) that the sub-shares are computed using
 finite field arithmetic.
 
-\hypertarget{share-recovery}{%
-\subsection{4. Share Recovery}\label{share-recovery}}
+\subsection{4. Share Recovery}\label{share-recovery}
 
-Share recovery is only possible if the user's decentralized identity
+Share recovery is only possible if the user's cryptographic identity
 either survived or can be recovered after the disastrous event. In
 either case, there are two options for share recovery depending on:
 
@@ -345,39 +341,35 @@ either case, there are two options for share recovery depending on:
   storage.
 \end{itemize}
 
-\hypertarget{share-recovery-quorum}{%
 \subsubsection{4.1. Share recovery with a surviving quorum of honest
-parties}\label{share-recovery-quorum}}
+parties}\label{share-recovery-quorum}
 
 If a quorum of honest parties survives the disastrous event, share
-recovery can be accomplished based on peer-to-peer decentralized
+recovery can be accomplished based on peer-to-peer cryptographic
 identity authentication.
 
 The party \(P_i\) that needs to recover its secret share initiates a
 signature-authenticated share recovery request leveraging its associated
-decentralized identity \(I_i\). The surviving quorum of honest parties
+cryptographic identity \(I_i\). The surviving quorum of honest parties
 collectively verify the request, and then initiate the key refresh
 protocol of the threshold signature scheme with \(P_i\) participating if
-\(I_i\) matches a previously verified decentralized identity for a
+\(I_i\) matches a previously verified cryptographic identity for a
 signatory.
 
-\hypertarget{share-recovery-backup}{%
 \subsubsection{4.2. Share recovery with a
-backup}\label{share-recovery-backup}}
+backup}\label{share-recovery-backup}
 
-\hypertarget{share-recovery-backup-overview}{%
 \paragraph{4.2.1. Overview of share recovery with a
-backup}\label{share-recovery-backup-overview}}
+backup}\label{share-recovery-backup-overview}
 
 From the share splitting and reconstruction protocol in
-\protect\hyperlink{share-splitting-and-reconstruction}{section 3} above,
-we note that for any party \(P\), the combination of a signing share
-\(k\) and a sub-share \(\beta\) alone is insufficient to reconstruct the
-secret share \(x\). This is because a signature of \(k\) from the
-decentralized identity \(I\) is required to compute the sub-share
-\(\alpha\), so that \(\alpha\) and \(\beta\) can then be used to
-reconstruct \(L\) and compute the secret share \(x\) as the constant
-term of \(L\).
+\hyperref[share-splitting-and-reconstruction]{section 3} above, we note
+that for any party \(P\), the combination of a signing share \(k\) and a
+sub-share \(\beta\) alone is insufficient to reconstruct the secret
+share \(x\). This is because a signature of \(k\) from the cryptographic
+identity \(I\) is required to compute the sub-share \(\alpha\), so that
+\(\alpha\) and \(\beta\) can then be used to reconstruct \(L\) and
+compute the secret share \(x\) as the constant term of \(L\).
 
 Therefore, a signing share \(k\) and sub-share \(\beta\) pair can be
 safely backed up to user-controlled secondary (e.g.~a secondary device
@@ -389,9 +381,8 @@ OneDrive \footnote{Microsoft OneDrive.
 Dropbox \footnote{Dropbox. \url{https://www.dropbox.com}.} e.t.c)
 without exposing the secret share \(x\).
 
-\hypertarget{share-recovery-backup-encrypted}{%
 \paragraph{4.2.2. Share recovery with an encrypted
-backup}\label{share-recovery-backup-encrypted}}
+backup}\label{share-recovery-backup-encrypted}
 
 For increased security, a signature of a standardized phrase can be used
 as entropy for generating an encryption secret which can then be used to
@@ -402,9 +393,8 @@ using the signature to recreate the encryption secret and then
 decrypting the encrypted backup to retrieve the signing share \(k\) and
 the sub-share \(\beta\).
 
-\hypertarget{share-recovery-backup-enhancements}{%
 \paragraph{4.2.3. Further security and usability considerations for
-share recovery with a backup}\label{share-recovery-backup-enhancements}}
+share recovery with a backup}\label{share-recovery-backup-enhancements}
 
 For further improved security and usability, the signing share \(k\) can
 be prefixed with a custom message that alerts the user to the purpose of
@@ -426,8 +416,7 @@ need for it to be backed up together with a sub-share \(\beta ^ \ast\)
 but instead relying on the user to provide this input during recovery as
 a security-usability tradeoff.
 
-\hypertarget{conclusion}{%
-\subsection{Conclusion}\label{conclusion}}
+\subsection{Conclusion}\label{conclusion}
 
 The Wamu project (meaning ``together'') aims to unlock the benefits of
 threshold signatures for decentralized teams and organizations, and
@@ -447,19 +436,17 @@ access structures by:
   threshold signature schemes into existing mainstream wallets.
 \end{itemize}
 
-\hypertarget{acknowledgements}{%
-\subsection{Acknowledgements}\label{acknowledgements}}
+\subsection{Acknowledgements}\label{acknowledgements}
 
 This work is funded by a grant from the Ethereum Foundation \footnote{Ethereum
   Foundation: Ecosystem Support Program.
   \url{https://esp.ethereum.foundation}.}.
 
-\hypertarget{references}{%
-\subsection{References}\label{references}}
+\subsection{References}\label{references}
 
-\hypertarget{refs}{}
+\protect\phantomsection\label{refs}
 \begin{CSLReferences}{0}{0}
-\leavevmode\vadjust pre{\hypertarget{ref-cggmp20}{}}%
+\bibitem[\citeproctext]{ref-cggmp20}
 \CSLLeftMargin{{[}1{]} }%
 \CSLRightInline{Canetti, R., Gennaro, R., Goldfeder, S., Makriyannis, N.
 and Peled, U. 2020. UC non-interactive, proactive, threshold ECDSA with
@@ -467,38 +454,38 @@ identifiable aborts. \emph{Proceedings of the 2020 ACM SIGSAC conference
 on computer and communications security} (New York, NY, USA, 2020),
 1769--1787. \url{https://eprint.iacr.org/2021/060}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-gg20}{}}%
+\bibitem[\citeproctext]{ref-gg20}
 \CSLLeftMargin{{[}2{]} }%
 \CSLRightInline{Gennaro, R. and Goldfeder, S. 2020. One round threshold
 ECDSA with identifiable abort. Cryptology ePrint Archive, Paper
 2020/540. \url{https://eprint.iacr.org/2020/540}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-cmp20}{}}%
+\bibitem[\citeproctext]{ref-cmp20}
 \CSLLeftMargin{{[}3{]} }%
 \CSLRightInline{Canetti, R., Makriyannis, N. and Peled, U. 2020. UC
 non-interactive, proactive, threshold ECDSA. Cryptology ePrint Archive,
 Paper 2020/492. \url{https://eprint.iacr.org/2020/492}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-frost20}{}}%
+\bibitem[\citeproctext]{ref-frost20}
 \CSLLeftMargin{{[}4{]} }%
 \CSLRightInline{Komlo, C. and Goldberg, I. 2020. FROST: Flexible
 round-optimized schnorr threshold signatures. Cryptology ePrint Archive,
 Paper 2020/852. \url{https://eprint.iacr.org/2020/852}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-wamu}{}}%
+\bibitem[\citeproctext]{ref-wamu}
 \CSLLeftMargin{{[}5{]} }%
 \CSLRightInline{Wamu: A protocol for computation of threshold signatures
 by multiple decentralized identities:
 \href{https://wamu.tech/specification}{\emph{https://wamu.tech/specification}}.
 Accessed: 2023-05-15.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-sss79}{}}%
+\bibitem[\citeproctext]{ref-sss79}
 \CSLLeftMargin{{[}6{]} }%
 \CSLRightInline{Shamir, A. 1979. How to share a secret. \emph{Commun.
 ACM}. 22, 11 (Nov. 1979), 612--613.
 DOI:https://doi.org/\href{https://doi.org/10.1145/359168.359176}{10.1145/359168.359176}.}
 
-\leavevmode\vadjust pre{\hypertarget{ref-wiki:interpolation}{}}%
+\bibitem[\citeproctext]{ref-wiki:interpolation}
 \CSLLeftMargin{{[}7{]} }%
 \CSLRightInline{Wikipedia. Polynomial interpolation:
 \href{https://en.wikipedia.org/wiki/Polynomial_interpolation}{\emph{https://en.wikipedia.org/wiki/Polynomial\_interpolation}}.
