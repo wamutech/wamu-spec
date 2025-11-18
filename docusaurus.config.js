@@ -33,7 +33,7 @@ async function createConfig() {
 
   return {
     title: 'Wamu',
-    tagline: 'A protocol and library for computation of threshold signatures by multiple decentralized identities.',
+    tagline: 'A protocol and library for computation of threshold signatures by multiple cryptographic identities.',
     favicon: 'img/logo.svg',
 
     // Production URL.
@@ -151,11 +151,7 @@ async function createConfig() {
                   href: 'https://github.com/wamutech/',
                 },
                 {
-                  label: 'Stack Overflow',
-                  href: 'https://stackoverflow.com/questions/tagged/wamu',
-                },
-                {
-                  label: 'Twitter',
+                  label: 'X/Twitter',
                   href: 'https://twitter.com/davidsemakula',
                 },
               ],

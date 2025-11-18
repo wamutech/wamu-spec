@@ -16,10 +16,9 @@ function HomepageHeader() {
         <h1 className="hero__title">{siteConfig.title}</h1>
         <p className="hero__subtitle">
           A protocol and library for computation of{' '}
-          <Link href="https://en.wikipedia.org/wiki/Threshold_cryptosystem#Methodology">threshold signatures</Link> by
-          multiple{' '}
+          <Link href="https://en.wikipedia.org/wiki/Threshold_cryptosystem">threshold signatures</Link> by multiple{' '}
           <Link href="https://ethereum.org/en/decentralized-identity/#what-are-decentralized-identifiers">
-            decentralized identities
+            cryptographic identities
           </Link>
           .
         </p>
