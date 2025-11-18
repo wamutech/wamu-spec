@@ -2,8 +2,7 @@
 // Note: type annotations allow type checking and IDEs autocompletion
 
 const path = require('node:path');
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const prismThemes = require('prism-react-renderer').themes;
 const math = require('remark-math');
 
 const remarkPandocPapers = require('./plugins/remark-pandoc-papers');
@@ -48,12 +47,21 @@ async function createConfig() {
     trailingSlash: false,
 
     onBrokenLinks: 'throw',
-    onBrokenMarkdownLinks: 'warn',
 
     // Internalization.
     i18n: {
       defaultLocale: 'en',
       locales: ['en'],
+    },
+
+    // Markdown
+    markdown: {
+      // Make "normal/commonmark" markdown parsing work for .md files.
+      // https://docusaurus.io/docs/markdown-features/react#markdown-and-jsx-interoperability
+      format: 'detect',
+      hooks: {
+        onBrokenMarkdownLinks: 'warn',
+      }
     },
 
     presets: [
@@ -178,8 +186,8 @@ async function createConfig() {
           respectPrefersColorScheme: true,
         },
         prism: {
-          theme: lightCodeTheme,
-          darkTheme: darkCodeTheme,
+          theme: prismThemes.github,
+          darkTheme: prismThemes.dracula,
         },
         tableOfContents: {
           minHeadingLevel: 2,

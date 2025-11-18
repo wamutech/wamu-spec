@@ -1,9 +1,9 @@
 const fs = require('fs');
-const { parseFrontMatter } = require('@docusaurus/utils');
+const { DEFAULT_PARSE_FRONT_MATTER } = require('@docusaurus/utils');
 
 // Adds YAML frontmatter to vfile data.
 // Docusaurus strips frontmatter from the markdown content before it passes it to mdx,
-// so we can't just use a remark plugin (e.g https://github.com/remarkjs/remark-frontmatter) in docusaurus config
+// so we can't just use a remark plugin (e.g. https://github.com/remarkjs/remark-frontmatter) in docusaurus config
 // to achieve this as it won't have access to the YAML frontmatter.
 // https://github.com/facebook/docusaurus/blob/docusaurus-v2/packages/docusaurus-mdx-loader/src/loader.ts#L155-L220
 async function extractFrontmatter(_, file) {
@@ -11,7 +11,7 @@ async function extractFrontmatter(_, file) {
   // https://github.com/vfile/vfile#filepath
   const fileContent = fs.readFileSync(file.path, 'utf8');
   // https://github.com/facebook/docusaurus/blob/docusaurus-v2/packages/docusaurus-mdx-loader/src/loader.ts#L163
-  const { frontMatter } = parseFrontMatter(fileContent);
+  const { frontMatter } = await DEFAULT_PARSE_FRONT_MATTER({ fileContent, filePath: file.path });
 
   // Add frontmatter to vfile data.
   file.data.matter = frontMatter;
