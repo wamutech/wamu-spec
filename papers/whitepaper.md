@@ -1,5 +1,5 @@
 ---
-title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities"
+title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Cryptographic Identities"
 subtitle: Whitepaper
 author: |
   David Semakula \
@@ -7,8 +7,8 @@ author: |
   https://davidsemakula.com
 date: |
   Published: 15th May, 2023 \
-  Last Updated: 13th November, 2023 \
-  Version: 1.5
+  Last Updated: 19th November, 2025 \
+  Version: 1.5.1
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -24,7 +24,7 @@ paper:
 
 ## 1. Introduction {#introduction}
 
-Multisig wallets (e.g. Safe [^1]) are already widely adopted [^2] and have proven the importance of noncustodial shared wallets with threshold access structures controlled by multiple decentralized identities, for mainstream users and decentralized teams and organizations.
+Multisig wallets (e.g. Safe [^1]) are already widely adopted [^2] and have proven the importance of noncustodial shared wallets with threshold access structures controlled by multiple cryptographic identities, for mainstream users and decentralized teams and organizations.
 
 However, threshold signatures have some unique benefits over multisig wallets including: cost-effectiveness, universal interoperability, and enhanced privacy and security.
 
@@ -41,18 +41,18 @@ Despite the aforementioned benefits, there are currently no mainstream threshold
 
 ### 1.2. Solution {#solution}
 
-The ecosystem needs a new breed of noncustodial threshold signature wallet solutions that are controlled by multiple decentralized identities and can run on mainstream consumer devices making them well suited for use by decentralized teams and organizations, and mainstream users.
+The ecosystem needs a new breed of noncustodial threshold signature wallet solutions that are controlled by multiple cryptographic identities and can run on mainstream consumer devices making them well suited for use by decentralized teams and organizations, and mainstream users.
 
 Recent breakthroughs in threshold signing research have yielded non-interactive threshold signature schemes (e.g. CGGMP20 [@cggmp20], GG20 [@gg20], CMP20 [@cmp20] and FROST20 [@frost20]) that allow for asynchronous communication between signing parties, making the use of mainstream consumer devices as signing parties viable.
 
-To remove the need for centralized and/or trust-based identity systems, and provide a user experience similar to existing multisig wallets, Wamu introduces a unique approach of augmenting a state-of-the-art non-interactive threshold signature scheme (e.g. CGGMP20 [@cggmp20]) by cryptographically associating each signing party with a decentralized identity.
+To remove the need for centralized and/or trust-based identity systems, and provide a user experience similar to existing multisig wallets, Wamu introduces a unique approach of augmenting a state-of-the-art non-interactive threshold signature scheme (e.g. CGGMP20 [@cggmp20]) by cryptographically associating each signing party with a cryptographic identity.
 This is achieved by:
 
-- Splitting the secret share for each party between the party and the output of a signing operation by its associated decentralized identity, thus making the signing operation a requirement for reconstructing the party's secret share as described in [section 3](#share-splitting-and-reconstruction).
-- Adding peer-to-peer decentralized identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
+- Splitting the secret share for each party between the party and the output of a signing operation by its associated cryptographic identity, thus making the signing operation a requirement for reconstructing the party's secret share as described in [section 3](#share-splitting-and-reconstruction).
+- Adding peer-to-peer cryptographic identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
 - Defining protocols for identity rotation, access structure modification (i.e. share addition and removal and threshold modification) and share recovery (as described in [section 4](#share-recovery)) that build on top of the above 2 augmentations.
 
-**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
+**NOTE:** For interoperability with existing wallet solutions, the only requirement for cryptographic identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
 
 ## 2. Preliminaries {#preliminaries}
 
@@ -60,17 +60,17 @@ The rest of this document describes how Wamu's unique share splitting and recons
 For these descriptions, we'll use the following notation:
 
 - $P$ denotes a party.
-- $I$ denotes a decentralized identity. 
-- $sk$ denotes the secret key of a decentralized identity.
+- $I$ denotes a cryptographic identity. 
+- $sk$ denotes the secret key of a cryptographic identity.
 - $\mathtt{Sig}$ denotes a signing algorithm.
 - $q$ denotes the prime order of the cyclic group of the elliptic curve.
 
-**NOTE:** While the share splitting and reconstruction protocol is described in technical detail in this document, for simplicity, the share recovery protocol is only described at a high-level and no technical detail is provided for decentralized identity authentication and the rest of Wamu's sub-protocols. 
+**NOTE:** While the share splitting and reconstruction protocol is described in technical detail in this document, for simplicity, the share recovery protocol is only described at a high-level and no technical detail is provided for cryptographic identity authentication and the rest of Wamu's sub-protocols. 
 We refer the reader to Wamu's technical specification [@wamu] for the technical details that are not provided in this document.
 
 ## 3. Share Splitting and Reconstruction {#share-splitting-and-reconstruction}
 
-Assuming that we have a secret share $x$ for a party $P$ with an associated decentralized identity $I$, the share splitting and reconstruction protocol describes how to split $x$ between $P$ and the output of a signing operation $\mathtt{Sig}$ by $I$ so that the output of $\mathtt{Sig}$ is required to reconstruct the secret share $x$.
+Assuming that we have a secret share $x$ for a party $P$ with an associated cryptographic identity $I$, the share splitting and reconstruction protocol describes how to split $x$ between $P$ and the output of a signing operation $\mathtt{Sig}$ by $I$ so that the output of $\mathtt{Sig}$ is required to reconstruct the secret share $x$.
 
 This is achieved by generating a message $k$ (we'll refer to this message as the "signing share") and computing a "sub-share" $\beta$ (i.e a share of the secret share $x$) in such a way that $k$ needs to be signed by $I$ using $\mathtt{Sig}$ to produce another "sub-share" $\alpha$, such that $\alpha$ and $\beta$ are shares of $x$ under Shamir's secret-sharing scheme [@sss79].
 
@@ -78,7 +78,7 @@ This is achieved by generating a message $k$ (we'll refer to this message as the
 
 ### 3.1. Share splitting {#share-splitting}
 
-Given a secret share $x$ as input and access to the decentralized identity $I$ with secret key $sk$, the share splitting protocol proceeds as follows:
+Given a secret share $x$ as input and access to the cryptographic identity $I$ with secret key $sk$, the share splitting protocol proceeds as follows:
 
 1. Sample a random message $k$ (i.e. the signing share).
 2. Compute a signature $(r, s) \leftarrow \mathtt{Sig}(sk, k)$.
@@ -90,7 +90,7 @@ Given a secret share $x$ as input and access to the decentralized identity $I$ w
 
 ### 3.2. Share reconstruction {#share-reconstruction}
 
-Given a signing share $k$ and a sub-share $\beta$ as input (i.e. the outputs of the share splitting protocol in [section 3.1](#share-splitting) above) and access to the decentralized identity $I$ with secret key $sk$, the share reconstruction protocol proceeds as follows:
+Given a signing share $k$ and a sub-share $\beta$ as input (i.e. the outputs of the share splitting protocol in [section 3.1](#share-splitting) above) and access to the cryptographic identity $I$ with secret key $sk$, the share reconstruction protocol proceeds as follows:
 
 1. Compute a signature $(r, s) \leftarrow \mathtt{Sig}(sk, k)$.
 2. Compute a sub-share $\alpha$ as the point $\alpha = (r, s) \pmod q$.
@@ -104,7 +104,7 @@ We use the notation $\alpha = (r, s) \pmod q$ for the sub-share to make it clear
 
 ## 4. Share Recovery {#share-recovery}
 
-Share recovery is only possible if the user's decentralized identity either survived or can be recovered after the disastrous event.
+Share recovery is only possible if the user's cryptographic identity either survived or can be recovered after the disastrous event.
 In either case, there are two options for share recovery depending on:
 
 - A quorum of honest parties surviving the disastrous event.
@@ -112,17 +112,17 @@ In either case, there are two options for share recovery depending on:
 
 ### 4.1. Share recovery with a surviving quorum of honest parties {#share-recovery-quorum}
 
-If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity authentication.
+If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer cryptographic identity authentication.
 
-The party $P_i$ that needs to recover its secret share initiates a signature-authenticated share recovery request leveraging its associated decentralized identity $I_i$. 
-The surviving quorum of honest parties collectively verify the request, and then initiate the key refresh protocol of the threshold signature scheme with $P_i$ participating if $I_i$ matches a previously verified decentralized identity for a signatory.
+The party $P_i$ that needs to recover its secret share initiates a signature-authenticated share recovery request leveraging its associated cryptographic identity $I_i$. 
+The surviving quorum of honest parties collectively verify the request, and then initiate the key refresh protocol of the threshold signature scheme with $P_i$ participating if $I_i$ matches a previously verified cryptographic identity for a signatory.
 
 ### 4.2. Share recovery with a backup {#share-recovery-backup}
 
 #### 4.2.1. Overview of share recovery with a backup  {#share-recovery-backup-overview}
 
 From the share splitting and reconstruction protocol in [section 3](#share-splitting-and-reconstruction) above, we note that for any party $P$, the combination of a signing share $k$ and a sub-share $\beta$ alone is insufficient to reconstruct the secret share $x$. 
-This is because a signature of $k$ from the decentralized identity $I$ is required to compute the sub-share $\alpha$, so that $\alpha$ and $\beta$ can then be used to reconstruct $L$ and compute the secret share $x$ as the constant term of $L$.
+This is because a signature of $k$ from the cryptographic identity $I$ is required to compute the sub-share $\alpha$, so that $\alpha$ and $\beta$ can then be used to reconstruct $L$ and compute the secret share $x$ as the constant term of $L$.
 
 Therefore, a signing share $k$ and sub-share $\beta$ pair can be safely backed up to user-controlled secondary (e.g. a secondary device or a flash drive) or device-independent storage (e.g. Apple iCloud [^9], Google Drive [^10], Microsoft OneDrive [^11], Dropbox [^12] e.t.c) without exposing the secret share $x$.
 

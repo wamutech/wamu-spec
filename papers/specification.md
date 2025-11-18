@@ -1,5 +1,5 @@
 ---
-title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Decentralized Identities"
+title: "Wamu: A Protocol for Computation of Threshold Signatures by Multiple Cryptographic Identities"
 subtitle: Technical Specification
 author: |
   David Semakula \
@@ -7,8 +7,8 @@ author: |
   https://davidsemakula.com
 date: |
   Published: 15th May, 2023 \
-  Last Updated: 13th November, 2023 \
-  Version: 1.6
+  Last Updated: 19th November, 2025 \
+  Version: 1.6.1
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
@@ -24,11 +24,11 @@ paper:
 
 ## 1. Introduction {#introduction}
 
-This document describes the Wamu protocol which augments a state-of-the-art non-interactive threshold signature scheme (e.g. CGGMP20 [@cggmp20]) by cryptographically associating each signing party with a decentralized identity.
+This document describes the Wamu protocol which augments a state-of-the-art non-interactive threshold signature scheme (e.g. CGGMP20 [@cggmp20]) by cryptographically associating each signing party with a cryptographic identity.
 This is achieved by:
 
-- Splitting the secret share for each party between the party and the output of a signing operation by its associated decentralized identity, thus making the signing operation a requirement for reconstructing the party's secret share.
-- Adding peer-to-peer decentralized identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
+- Splitting the secret share for each party between the party and the output of a signing operation by its associated cryptographic identity, thus making the signing operation a requirement for reconstructing the party's secret share.
+- Adding peer-to-peer cryptographic identity authentication to the key generation and signing protocols (and optionally to the key refresh protocol) of the threshold signature scheme.
 - Defining protocols for identity rotation, access structure modification (i.e. share addition and removal and threshold modification) and share recovery that build on top of the above 2 augmentations.
 
 Wamu is designed to operate in a decentralized, trust-minimized and asynchronous setting with:
@@ -36,7 +36,7 @@ Wamu is designed to operate in a decentralized, trust-minimized and asynchronous
 - no centralized or trust-based identity infrastructure.
 - signing parties being mainstream consumer devices communicating asynchronously.
 
-**NOTE:** For interoperability with existing wallet solutions, the only requirement for decentralized identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
+**NOTE:** For interoperability with existing wallet solutions, the only requirement for cryptographic identity providers is the ability to compute cryptographic signatures for any arbitrary message in such a way that the output signature is 1) deterministic and 2) can be verified in a non-interactive manner.
 
 ## 2. Preliminaries {#preliminaries}
 
@@ -44,13 +44,13 @@ The rest of this document describes the Wamu protocol in technical detail.
 For these descriptions, we'll use the following notation:
 
 - $P$ denotes a party.
-- $I$ denotes a decentralized identity.
-- $vk$ denotes the verifying key (or address) of a decentralized identity.
-- $sk$ denotes the secret key of a decentralized identity.
+- $I$ denotes a cryptographic identity.
+- $vk$ denotes the verifying key (or address) of a cryptographic identity.
+- $sk$ denotes the secret key of a cryptographic identity.
 - $\mathtt{Sig}$ denotes a signing algorithm.
 - $\mathtt{Ver}$ denotes a signature verification algorithm.
 - $q$ denotes the prime order of the cyclic group of the elliptic curve.
-- $\mathcal{S}$ denotes the set of verified decentralized identities for all parties.
+- $\mathcal{S}$ denotes the set of verified cryptographic identities for all parties.
 - $t$ denotes the threshold (i.e. the minimum number of signatories required to jointly compute a valid signature using the threshold signature scheme).
 - $A$ denotes a predefined prefix chosen to ensure that signatures computed for identity authentication cannot be valid transaction signatures.
 - $\Vert$ denotes concatenation using an unambiguous encoding scheme.
@@ -60,7 +60,7 @@ Wamu is a generic protocol that can be adapted to any non-interactive threshold 
 
 ## 3. Share Splitting and Reconstruction {#share-splitting-and-reconstruction}
 
-Given a secret share $x$ for a party $P$ with an associated decentralized identity $I$, the share splitting and reconstruction protocol describes how to split $x$ between $P$ and the output of a signing operation $\mathtt{Sig}$ by $I$ so that the output of $\mathtt{Sig}$ is required to reconstruct the secret share $x$.
+Given a secret share $x$ for a party $P$ with an associated cryptographic identity $I$, the share splitting and reconstruction protocol describes how to split $x$ between $P$ and the output of a signing operation $\mathtt{Sig}$ by $I$ so that the output of $\mathtt{Sig}$ is required to reconstruct the secret share $x$.
 
 This is achieved by generating a message $k$ (we'll refer to this message as the "signing share") and computing a "sub-share" $\beta$ (i.e a share of the secret share $x$) in such a way that $k$ needs to be signed by $I$ using $\mathtt{Sig}$ to produce another "sub-share" $\alpha$, such that $\alpha$ and $\beta$ are shares of $x$ under Shamir's secret-sharing scheme [@sss79].
 
@@ -68,7 +68,7 @@ This is achieved by generating a message $k$ (we'll refer to this message as the
 
 ### 3.1. Share splitting {#share-splitting}
 
-Given a secret share $x$ as input and access to the decentralized identity $I$ with secret key $sk$, the share splitting protocol proceeds as follows:
+Given a secret share $x$ as input and access to the cryptographic identity $I$ with secret key $sk$, the share splitting protocol proceeds as follows:
 
 1. Sample a random message $k$ (i.e. the signing share).
 2. Compute a signature $(r, s) \leftarrow \mathtt{Sig}(sk, k)$.
@@ -80,7 +80,7 @@ Given a secret share $x$ as input and access to the decentralized identity $I$ w
 
 ### 3.2. Share reconstruction {#share-reconstruction}
 
-Given a signing share $k$ and a sub-share $\beta$ as input (i.e. the outputs of the share splitting protocol in [section 3.1](#share-splitting)) and access to the decentralized identity $I$ with secret key $sk$, the share reconstruction protocol proceeds as follows:
+Given a signing share $k$ and a sub-share $\beta$ as input (i.e. the outputs of the share splitting protocol in [section 3.1](#share-splitting)) and access to the cryptographic identity $I$ with secret key $sk$, the share reconstruction protocol proceeds as follows:
 
 1. Compute a signature $(r, s) \leftarrow \mathtt{Sig}(sk, k)$.
 2. Compute a sub-share $\alpha$ as the point $\alpha = (r, s) \pmod q$.
@@ -95,7 +95,7 @@ We use the notation $\alpha \leftarrow (r, s) \pmod q$ for the sub-share to make
 ## 4. Threshold Signature Scheme Augmentations {#augmentations}
 
 The general approach for augmenting threshold signature protocols (i.e. key generation and signing - and optionally key refresh) 
-is for each party to sign a non-interactive replay resistant challenge during the first round of communication to prove that it currently controls the associated decentralized identity. 
+is for each party to sign a non-interactive replay resistant challenge during the first round of communication to prove that it currently controls the associated cryptographic identity. 
 The other parties then verify the challenge signature at the beginning of the next round or identify the culprit and halt.
 
 Key generation and key refresh protocols typically include a commitment to secret and random values in their first round while signing includes an arbitrary message, 
@@ -116,8 +116,8 @@ and transforming $(t, n)$ to $(t, t+1)$ shares (using the appropriate Lagrangian
 
 Follow the key generation protocol described in section 3.1 and figure 5 of CGGMP20 [@cggmp20] to generate ECDSA secret shares with the following modifications:
 
-1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ as follows:
-   - The decentralized identity verifying key $vk_i$.
+1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ as follows:
+   - The cryptographic identity verifying key $vk_i$.
    - The current UTC timestamp $\Delta$.
    - The signature $\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert V_i)$.
 2. At the beginning of Round 2, for each $P_i$, verify $\sigma _j$ from all $P_j$ where $j \neq i$:
@@ -133,8 +133,8 @@ Follow the key generation protocol described in section 3.1 and figure 5 of CGGM
 Follow the signing protocol described in sections 4.2 and 4.3 and figure 8 of CGGMP20 [@cggmp20] to generate an ECDSA signature with the following modifications:
 
 1. Before Round 1, for each party $P_i$, follow the share reconstruction protocol in [section 3.2](#share-reconstruction) to reconstruct secret share $x_i$.
-2. At the end of Round 1, for each $P_i$ associated with the decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$, send 2 additional parameters to all $P_j$ where $j \neq i$ as follows:
-   - The decentralized identity verifying key $vk_i$.
+2. At the end of Round 1, for each $P_i$ associated with the cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$, send 2 additional parameters to all $P_j$ where $j \neq i$ as follows:
+   - The cryptographic identity verifying key $vk_i$.
    - The current UTC timestamp $\Delta$.
    - The signature $\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert m)$.
 3. At the beginning of the Output phase, verify $\sigma _j$ from all $P_j$ where $j \neq i$ as follows:
@@ -146,8 +146,8 @@ Follow the signing protocol described in sections 4.2 and 4.3 and figure 8 of CG
 
 Follow the key refresh protocol described in section 3.2 and figure 6 of CGGMP20 [@cggmp20] to generate new ECDSA secret shares with the following modifications:
 
-1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ as follows:
-   - The decentralized identity verifying key $vk_i$.
+1. At the end of Round 1, broadcast 2 additional parameters for each $P_i$ associated with the cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ as follows:
+   - The cryptographic identity verifying key $vk_i$.
    - The current UTC timestamp $\Delta$.
    - The signature $\sigma _i \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert V_i)$.
 2. At the beginning of Round 2, for each $P_i$, verify $\sigma _j$ from all $P_j$ where $j \neq i$ as follows:
@@ -162,11 +162,11 @@ Follow the key refresh protocol described in section 3.2 and figure 6 of CGGMP20
 
 ### 5.1. Identity Authenticated Request {#identity-authed-request}
 
-Decentralized identity authenticated requests allow parties to perform or request actions based on their associated decentralized identity.
+Cryptographic identity authenticated requests allow parties to perform or request actions based on their associated cryptographic identity.
 
 #### 5.1.1. Identity Authenticated Request Initiation {#identity-authed-request-initiation}
 
-To initiate an identity authenticated request with a command $C$ from a party $P_i$ associated with decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$:
+To initiate an identity authenticated request with a command $C$ from a party $P_i$ associated with cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$:
 
 1. Read the current UTC timestamp $\Delta$.
 2. Compute the signature $\sigma \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert C)$.
@@ -174,7 +174,7 @@ To initiate an identity authenticated request with a command $C$ from a party $P
 
 #### 5.1.2. Identity Authenticated Request Verification {#identity-authed-request-verification}
 
-To verify an identity authenticated request with a command $C$ from a party $P_i$ given its associated decentralized identity verifying key $vk_i$, a timestamp $\Delta$, a signature $\sigma$ and a set of verified decentralized identities for all other parties $\mathcal{S}$ as input:
+To verify an identity authenticated request with a command $C$ from a party $P_i$ given its associated cryptographic identity verifying key $vk_i$, a timestamp $\Delta$, a signature $\sigma$ and a set of verified cryptographic identities for all other parties $\mathcal{S}$ as input:
 
 1. Verify that $vk_i \in \mathcal{S}$ or report the culprit and halt.
 2. Verify that $t$ is within the current epoch for identity authenticated requests or report the culprit and halt.
@@ -182,7 +182,7 @@ To verify an identity authenticated request with a command $C$ from a party $P_i
 
 ### 5.2. Identity Challenge {#identity-challenge}
 
-Identity challenges are used to verify that a party controls a decentralized identity.
+Identity challenges are used to verify that a party controls a cryptographic identity.
 
 #### 5.2.1. Identity Challenge Initiation {#identity-challenge-initiation}
 
@@ -192,7 +192,7 @@ To issue an identity challenge to a party $P_i$ from all verifying parties $P_j$
 
 #### 5.2.2. Identity Challenge Response {#identity-challenge-response}
 
-For a party $P_i$ with associated decentralized identity secret key $sk_i$, to respond to an identity challenge for a command $C$ initiated at timestamp $\Delta$, given $v_j$ from all parties $P_j$ where $j \neq i$:
+For a party $P_i$ with associated cryptographic identity secret key $sk_i$, to respond to an identity challenge for a command $C$ initiated at timestamp $\Delta$, given $v_j$ from all parties $P_j$ where $j \neq i$:
 
 1. Compute $v = \Vert _{j \neq i} \: v_j$. 
 2. Compute the signature $\sigma \leftarrow \mathtt{Sig}(sk_i, A \Vert \Delta \Vert C \Vert v)$. 
@@ -200,16 +200,16 @@ For a party $P_i$ with associated decentralized identity secret key $sk_i$, to r
 
 #### 5.2.3. Identity Challenge Response Verification {#identity-challenge-verification}
 
-To verify an identity challenge response from a party $P_i$ for a command $C$ initiated at timestamp $\Delta$, given its associated decentralized identity verifying key $vk_i$, a signature $\sigma$ and $v_j$ from all verifying parties $P_j$ where $j \neq i$ as input:
+To verify an identity challenge response from a party $P_i$ for a command $C$ initiated at timestamp $\Delta$, given its associated cryptographic identity verifying key $vk_i$, a signature $\sigma$ and $v_j$ from all verifying parties $P_j$ where $j \neq i$ as input:
 
 1. Compute $v = \Vert _{j \neq i} \: v_j$.
 2. Verify $\sigma$ by checking that the output of $\mathtt{Ver}(vk_i, A \Vert \Delta \Vert C \Vert v, \sigma)$ is valid or report the culprit and halt.
 
 ### 5.3. Identity Rotation {#identity-rotation}
 
-Identity rotation allows any party to change the decentralized identity associated with its secret share. 
+Identity rotation allows any party to change the cryptographic identity associated with its secret share. 
 
-Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ to a decentralized identity $I_i^ \ast$ with verifying key $vk_i^ \ast$ and secret key $sk_i^ \ast$ proceeds as follows:
+Identity rotation for a party $P_i$ from a cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ to a cryptographic identity $I_i^ \ast$ with verifying key $vk_i^ \ast$ and secret key $sk_i^ \ast$ proceeds as follows:
 
 1. For $P_i$, initiate an "identity-rotation" request by following the protocol in [section 5.1.1](#identity-authed-request-initiation).
 2. For all $P_j$ where $j \neq i$:
@@ -220,7 +220,7 @@ Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with ver
    - Add $vk_i^ \ast$ and $\sigma _i^ \ast$ to the broadcast parameters.
 4. For all $P_j$ where $j \neq i$:
    - Verify the identity challenge response from $P_i$ by following the protocol in [section 5.2.3](#identity-challenge-verification).
-   - Verify that $P_i$ controls the new decentralized identity verifying key $vk_i^ \ast$ as follows:
+   - Verify that $P_i$ controls the new cryptographic identity verifying key $vk_i^ \ast$ as follows:
      - Compute $v = \Vert _{j \neq i} \: v_j$:
      - Verify $\sigma ^ \ast$ by checking that the output of $\mathtt{Ver}(vk_i^ \ast, A \Vert \Delta \Vert C \Vert v, \sigma ^ \ast)$ is valid or report the culprit and halt.
    - Modify Stored State as follows:
@@ -228,9 +228,9 @@ Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with ver
      - Replace $\mathcal{S}$ with $\mathcal{S} ^ \ast$.
    - Broadcast confirmation of successful rotation of the verifying key for $P_i$.
 5. For $P_i$, upon receiving confirmation of successful rotation from a quorum of $P_j$:
-   - Compute the new signing share $k_i^ \ast$ and sub-share $\beta _i^ \ast$ based on the new decentralized identity $I_i^ \ast$ as follows:
+   - Compute the new signing share $k_i^ \ast$ and sub-share $\beta _i^ \ast$ based on the new cryptographic identity $I_i^ \ast$ as follows:
      - Compute the secret share $x_i$ by following the share reconstruction protocol in [section 3.2](#share-reconstruction).
-     - Follow the share splitting protocol in [section 3.1](#share-splitting) to split $x_i$ into a new signing share $k_i^ \ast$ and a new sub-share $\beta _i^ \ast$ based on the new decentralized identity $I_i^ \ast$.
+     - Follow the share splitting protocol in [section 3.1](#share-splitting) to split $x_i$ into a new signing share $k_i^ \ast$ and a new sub-share $\beta _i^ \ast$ based on the new cryptographic identity $I_i^ \ast$.
    - Modify Stored State as follows:
      - Replace $vk_i$ with $vk_i^ \ast$ in $\mathcal{S}$.
      - Replace $k_i$ with $k_i^ \ast$.
@@ -240,7 +240,7 @@ Identity rotation for a party $P_i$ from a decentralized identity $I_i$ with ver
 
 Quorum approved requests allow any verified party to initiate actions that require explicit approval from a quorum of verified parties before execution (e.g. share addition and removal, and threshold modification).
 
-A quorum approved request with a command $C$ from a party $P_i$ associated with decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ proceeds as follows:
+A quorum approved request with a command $C$ from a party $P_i$ associated with cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ proceeds as follows:
 
 1. For $P_i$, initiate an identity authenticated request by following the protocol in [section 5.1.1](#identity-authed-request-initiation).
 2. For all $P_j$ where $j \neq i$ that approve the requested action:
@@ -264,7 +264,7 @@ A quorum approved request with a command $C$ from a party $P_i$ associated with 
 
 Access structure modification allows a quorum of verified parties to perform any of the following actions:
 
-- share addition - issue a secret share to a new party and its associated decentralized identity
+- share addition - issue a secret share to a new party and its associated cryptographic identity
 - share removal - revoke the secret share of any party.
 - threshold modification - change the threshold (i.e. change the size of the quorum).
 
@@ -287,14 +287,14 @@ Feldman's verifiable secret sharing [@feldman-vss] (with some modifications as d
 
 ### 6.1. Share Addition {#share-addition}
 
-Share addition for a new party $P_i$ with associated decentralized identity $I_i$ proceeds as follows:
+Share addition for a new party $P_i$ with associated cryptographic identity $I_i$ proceeds as follows:
 
 1. Initiate a quorum approved "share-addition" request by following the protocol in [section 5.4](#quorum-approved-request).
 2. Follow the augmented key refresh protocol described in [section 4.3](#key-refresh), with verifiable share redistribution modifications as described above and with $P_i$ included as a participant, if the quorum approved request above succeeds.
 
 ### 6.2. Share Removal {#share-removal}
 
-Share removal for a party $P_i$ with associated decentralized identity $I_i$ proceeds as follows:
+Share removal for a party $P_i$ with associated cryptographic identity $I_i$ proceeds as follows:
 
 1. Initiate a quorum approved "share-removal" request by following the protocol in [section 5.4](#quorum-approved-request).
 2. Follow the augmented key refresh protocol described in [section 4.3](#key-refresh), with verifiable share redistribution modifications as described above and without $P_i$, if the quorum approved request above succeeds.
@@ -308,7 +308,7 @@ Threshold modification proceeds as follows:
 
 ## 7. Share Recovery {#share-recovery}
 
-Share recovery is only possible if the user's decentralized identity either survived or can be recovered after the disastrous event. 
+Share recovery is only possible if the user's cryptographic identity either survived or can be recovered after the disastrous event. 
 In either case, there are two options for share recovery depending on:
 
 - A quorum of honest parties surviving the disastrous event.
@@ -316,9 +316,9 @@ In either case, there are two options for share recovery depending on:
 
 ### 7.1. Share recovery with a surviving quorum of honest parties {#share-recovery-quorum}
 
-If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer decentralized identity authentication.
+If a quorum of honest parties survives the disastrous event, share recovery can be accomplished based on peer-to-peer cryptographic identity authentication.
 
-Share recovery for a party $P_i$ with associated decentralized identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ proceeds as follows:
+Share recovery for a party $P_i$ with associated cryptographic identity $I_i$ with verifying key $vk_i$ and secret key $sk_i$ proceeds as follows:
 
 1. For $P_i$, Initiate a "share-recovery" request by following the protocol in [section 5.1.1](#identity-authed-request-initiation).
 2. For all $P_j$ where $j \neq i$:
@@ -332,7 +332,7 @@ Share recovery for a party $P_i$ with associated decentralized identity $I_i$ wi
 
 #### 7.2.1. Overview of share recovery with a backup  {#share-recovery-backup-overview}
 From the share splitting and reconstruction protocol in [section 3](#share-splitting-and-reconstruction), we note that for any party $P$, the combination of a signing share $k$ and a sub-share $\beta$ alone is insufficient to reconstruct the secret share $x$.
-This is because a signature of $k$ from the decentralized identity $I$ is required to compute the sub-share $\alpha$, so that $\alpha$ and $\beta$ can then be used to reconstruct $L$ and compute the secret share $x$ as the constant term of $L$.
+This is because a signature of $k$ from the cryptographic identity $I$ is required to compute the sub-share $\alpha$, so that $\alpha$ and $\beta$ can then be used to reconstruct $L$ and compute the secret share $x$ as the constant term of $L$.
 
 Therefore, a signing share $k$ and sub-share $\beta$ pair can be safely backed up to user-controlled secondary (e.g. a secondary device or a flash drive) or device-independent storage (e.g. Apple iCloud [^1], Google Drive [^2], Microsoft OneDrive [^3], Dropbox [^4] e.t.c) without exposing the secret share $x$.
 
