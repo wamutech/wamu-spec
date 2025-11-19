@@ -21,7 +21,7 @@ async function extractFrontmatter(_, file) {
 // https://pandoc.org/MANUAL.html#placement-of-the-bibliography
 // https://github.com/timlrx/rehype-citation/blob/v1.0.1/README.md?plain=1#L132
 // https://github.com/timlrx/rehype-citation/blob/v1.0.1/src/types.js#L13-L14
-async function convertPandocToRehypeCitationRef(ast) {
+async function convertPandocToRehypeCitationRef(ast, _) {
   const { visit } = await import('unist-util-visit');
   visit(ast, 'text', (node) => {
     if (/:::\s*{#refs}\s*:::/i.test(node.value)) {
