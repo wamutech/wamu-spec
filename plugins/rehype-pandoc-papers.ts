@@ -1,20 +1,27 @@
+import type { Root, RootContent } from 'hast';
+import type { VFile } from 'vfile';
+
+import { fromHtml } from 'hast-util-from-html';
+import { readingTime } from 'hast-util-reading-time';
+import { selectAll } from 'hast-util-select';
+import { removePosition } from 'unist-util-remove-position';
+import { visit } from 'unist-util-visit';
+
 // Converts an html string to a hast element.
-async function hastElementFromHtml(html) {
-  const { fromHtml } = await import('hast-util-from-html');
-  const { removePosition } = await import('unist-util-remove-position');
+function hastElementFromHtml(html: string): RootContent {
   // Convert html markup to hast and read the first child.
   return removePosition(fromHtml(html, { fragment: true }), { force: true }).children[0];
 }
 
 // Adds subtitle to the document if defined for papers.
-async function addSubtitle(ast, file) {
+function addSubtitle(ast: Root, file: VFile) {
   // Add subtitle to the beginning of the doc if it's a paper with a defined subtitle.
   const subtitle = file.data.matter?.paper?.subtitle;
   if (subtitle) {
     const markup = `<h2 style="color: var(--ifm-link-color);">${subtitle}</h2>`;
 
     // Convert html markup to hast.
-    let hast = await hastElementFromHtml(markup);
+    let hast = hastElementFromHtml(markup);
 
     // Insert author hast at the beginning of the tree.
     ast.children.unshift(hast);
@@ -22,11 +29,10 @@ async function addSubtitle(ast, file) {
 }
 
 // Adds date (if defined) and reading time to the document for papers.
-async function addDateAndReadingTime(ast, file) {
+function addDateAndReadingTime(ast, file) {
   // Add date (if defined) and reading time info to the beginning of the doc if it's a paper.
   const matter = file.data.matter;
   if (matter?.paper) {
-    const { readingTime } = await import('hast-util-reading-time');
     const date = matter?.date;
     const markup = `<div class="margin-vert--md">
         ${[
@@ -38,7 +44,7 @@ async function addDateAndReadingTime(ast, file) {
     </div>`;
 
     // Convert html markup to hast.
-    let hast = await hastElementFromHtml(markup);
+    let hast = hastElementFromHtml(markup);
 
     // Insert hast at the beginning of the tree.
     ast.children.unshift(hast);
@@ -46,7 +52,7 @@ async function addDateAndReadingTime(ast, file) {
 }
 
 // Adds author to the document if defined for papers.
-async function addAuthor(ast, file) {
+function addAuthor(ast: Root, file: VFile) {
   // Add authors widget to the beginning of the doc if it's a paper with defined authors.
   const authors = file.data.matter?.paper?.authors;
   if (authors && authors?.length > 0) {
@@ -66,7 +72,7 @@ async function addAuthor(ast, file) {
     </div>`;
 
     // Convert html markup to hast.
-    let authorHast = await hastElementFromHtml(markup);
+    let authorHast = hastElementFromHtml(markup);
 
     // Insert hast at the beginning of the tree.
     ast.children.unshift(authorHast);
@@ -74,7 +80,7 @@ async function addAuthor(ast, file) {
 }
 
 // Adds pdf hyperlink to the document if defined for papers.
-async function addPdfLink(ast, file) {
+function addPdfLink(ast: Root, file: VFile) {
   // Add hyperlink at the beginning of the doc if it's a paper with a defined pdf.
   const pdfFilename = file.data.matter?.paper?.pdf;
   if (pdfFilename) {
@@ -83,7 +89,7 @@ async function addPdfLink(ast, file) {
     </a>`;
 
     // Convert html markup to hast.
-    let hast = await hastElementFromHtml(markup);
+    let hast = hastElementFromHtml(markup);
 
     // Insert hast at the beginning of the tree.
     ast.children.unshift(hast);
@@ -92,10 +98,7 @@ async function addPdfLink(ast, file) {
 
 // Converts URL literals in references into hyperlinks.
 // Should be placed after rehype-citation (or equivalent).
-async function autoLinkReferences(ast) {
-  const { selectAll } = await import('hast-util-select');
-  const { visit } = await import('unist-util-visit');
-
+function autoLinkReferences(ast: Root) {
   // Get all refs.
   let refs = selectAll('#refs.references.csl-bib-body .csl-right-inline', ast);
   for (let ref of refs) {
@@ -166,29 +169,18 @@ async function autoLinkReferences(ast) {
 }
 
 // Rehype customizations for pandoc papers.
-function rehypePandocPapers() {
-  return async (ast, file) => {
-    await Promise.all([
-      // Convert URL literals in references into hyperlinks.
-      autoLinkReferences(ast, file),
-
-      // Order of execution matters for these because they insert at the top of the document.
-      (async () => {
-        for (const callable of [
-          // Add pdf hyperlink to the document for papers.
-          addPdfLink,
-          // Add author to the document for papers.
-          addAuthor,
-          // Add date (if defined) and reading time to the document for papers.
-          addDateAndReadingTime,
-          // Adds subtitle to the document if defined for papers.
-          addSubtitle,
-        ]) {
-          await callable(ast, file);
-        }
-      })(),
-    ]);
+export default function rehypePandocPapers() {
+  return async (ast: Root, file: VFile) => {
+    // Convert URL literals in references into hyperlinks.
+    autoLinkReferences(ast);
+    // Order of execution matters for these because they insert at the top of the document.
+    // Add pdf hyperlink to the document for papers.
+    addPdfLink(ast, file);
+    // Add author to the document for papers.
+    addAuthor(ast, file);
+    // Add date (if defined) and reading time to the document for papers.
+    addDateAndReadingTime(ast, file);
+    // Adds subtitle to the document if defined for papers.
+    addSubtitle(ast, file);
   };
 }
-
-module.exports = rehypePandocPapers;
