@@ -3,7 +3,6 @@
 
 const path = require('node:path');
 const prismThemes = require('prism-react-renderer').themes;
-const math = require('remark-math');
 
 const remarkPandocPapers = require('./plugins/remark-pandoc-papers');
 const rehypePandocPapers = require('./plugins/rehype-pandoc-papers');
@@ -14,6 +13,7 @@ const rehypePandocPapers = require('./plugins/rehype-pandoc-papers');
 /** @type {() => Promise<import('@docusaurus/types').Config>} */
 async function createConfig() {
   const katex = (await import('rehype-katex')).default;
+  const math = (await import('remark-math')).default;
   const rehypeCitation = (await import('rehype-citation')).default;
 
   const papersDir = path.join(process.cwd(), 'papers');
