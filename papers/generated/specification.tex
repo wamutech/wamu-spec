@@ -94,7 +94,7 @@ hello@davidsemakula.com\\
 https://davidsemakula.com}
 \date{Published: 15th May, 2023\\
 Last Updated: 19th November, 2025\\
-Version: 1.6.1}
+Version: 1.6.2}
 
 \begin{document}
 \maketitle
@@ -287,7 +287,7 @@ Augmentations}\label{augmentations}
 
 The general approach for augmenting threshold signature protocols
 (i.e.~key generation and signing - and optionally key refresh) is for
-each party to sign a non-interactive replay resistant challenge during
+each party to sign a non-interactive replay-resistant challenge during
 the first round of communication to prove that it currently controls the
 associated cryptographic identity. The other parties then verify the
 challenge signature at the beginning of the next round or identify the
@@ -298,7 +298,7 @@ to secret and random values in their first round while signing includes
 an arbitrary message, so either a commitment (e.g.~for key generation
 and key refresh) or the message (e.g.~for signing) is unambiguously
 concatenated with a protocol specific prefix and the current timestamp
-to generate a non-interactive replay resistant challenge.
+to generate a non-interactive replay-resistant challenge.
 
 \textbf{NOTE:} While most threshold signature schemes don't define a key
 refresh protocol (e.g.~GG20 {[}\citeproc{ref-gg20}{2}{]} and FROST20
