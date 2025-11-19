@@ -8,7 +8,7 @@ author: |
 date: |
   Published: 15th May, 2023 \
   Last Updated: 19th November, 2025 \
-  Version: 1.5.2
+  Version: 1.5.3
 # Docusaurus config
 sidebar_label: Whitepaper
 sidebar_position: 1
@@ -157,7 +157,7 @@ This work is funded by a grant from the Ethereum Foundation [^13].
 :::
 
 <!-- Footnotes -->
-[^1]: Safe. <https://safe.global/wallet>
+[^1]: Safe. <https://safe.global>
 
 [^2]: Dune Analytics. [Mainnet] Safe. <https://dune.com/safe/ethereum>
 
