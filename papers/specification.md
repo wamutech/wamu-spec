@@ -8,7 +8,7 @@ author: |
 date: |
   Published: 15th May, 2023 \
   Last Updated: 19th November, 2025 \
-  Version: 1.6.1
+  Version: 1.6.2
 # Docusaurus config
 sidebar_label: Technical Specification
 sidebar_position: 2
@@ -95,11 +95,11 @@ We use the notation $\alpha \leftarrow (r, s) \pmod q$ for the sub-share to make
 ## 4. Threshold Signature Scheme Augmentations {#augmentations}
 
 The general approach for augmenting threshold signature protocols (i.e. key generation and signing - and optionally key refresh) 
-is for each party to sign a non-interactive replay resistant challenge during the first round of communication to prove that it currently controls the associated cryptographic identity. 
+is for each party to sign a non-interactive replay-resistant challenge during the first round of communication to prove that it currently controls the associated cryptographic identity. 
 The other parties then verify the challenge signature at the beginning of the next round or identify the culprit and halt.
 
 Key generation and key refresh protocols typically include a commitment to secret and random values in their first round while signing includes an arbitrary message, 
-so either a commitment (e.g. for key generation and key refresh) or the message (e.g. for signing) is unambiguously concatenated with a protocol specific prefix and the current timestamp to generate a non-interactive replay resistant challenge. 
+so either a commitment (e.g. for key generation and key refresh) or the message (e.g. for signing) is unambiguously concatenated with a protocol specific prefix and the current timestamp to generate a non-interactive replay-resistant challenge. 
 
 **NOTE:** While most threshold signature schemes don't define a key refresh protocol (e.g. GG20 [@gg20] and FROST20 [@frost20]),
 it is relatively straightforward to derive such a protocol from a standard proactive secret sharing scheme like HJKY95 [@hjky95].
